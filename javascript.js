@@ -161,7 +161,7 @@ function actualizarEstadoTarjeta(tarjeta, spanCantidad) {
 
 
 /* ================================================================
-   6. FILTRO DE CATEGORÍAS
+   6. FILTRO DE CATEGORÍAS (con soporte para "todo")
    ================================================================ */
 
 function inicializarFiltros() {
@@ -185,8 +185,14 @@ function inicializarFiltros() {
       
       // Filtrar tarjetas
       todasLasTarjetas.forEach(function(tarjeta) {
-        var esDeCategoria = tarjeta.getAttribute('data-category') === target;
-        tarjeta.classList.toggle('hidden', !esDeCategoria);
+        if (target === 'todo') {
+          // Si la categoría es "todo", mostrar TODOS los productos
+          tarjeta.classList.remove('hidden');
+        } else {
+          // Si no, mostrar solo los que coinciden
+          var esDeCategoria = tarjeta.getAttribute('data-category') === target;
+          tarjeta.classList.toggle('hidden', !esDeCategoria);
+        }
       });
     };
     
