@@ -344,13 +344,14 @@ botonEnviar.addEventListener('click', function() {
     }
   });
   
-  var mensaje = '🛒 *NUEVO PEDIDO — Dairy & Marco*\n\n' +
-    '👤 *Nombre:* ' + nombre + '\n' +
-    '📞 *Teléfono:* ' + telefono + '\n' +
-    '📍 *Dirección:* ' + direccion + '\n' +
-    '💳 *Últimos 4 de tarjeta:* ' + tarjeta + '\n\n' +
-    '📦 *Productos:*\n' + lineasProductos.join('\n') + '\n\n' +
-    '💰 *Total: $' + totalPrecio.toFixed(2) + '*';
+  var mensaje = '*NUEVO PEDIDO — Dairy & Marco*\n\n' +
+  '- Nombre: ' + nombre + '\n' +
+  '- Teléfono: ' + telefono + '\n' +
+  '- Dirección: ' + direccion + '\n' +
+  '- Últimos 4 de tarjeta: ' + tarjeta + '\n\n' +
+  '> Productos:\n' +
+  '> ' + lineasProductos.join('\n> ') + '\n\n' +
+  '*Total: $' + totalPrecio.toFixed(2) + '*';
   
   var numeroWhatsApp = botonWhatsApp.dataset.phone;
   var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
