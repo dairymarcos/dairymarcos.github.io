@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Maní Molido",
+    "price": 120.00,
+    "category": "dulces",
+    "image": "img/maniC.jpg"
+  },
+  {
+    "name": "Cremita de Leche",
+    "price": 60.00,
+    "category": "dulces",
+    "image": "img/cremitaLeche.webp"
+  },
+  {
+    "name": "Refresco de Lata Naranja",
+    "price": 250.00,
+    "category": "bebidas",
+    "image": "https://www.tgraf.cu/catauro/wp-content/uploads/sites/4/2023/07/1690152317_1.jpeg"
+  }
+]
