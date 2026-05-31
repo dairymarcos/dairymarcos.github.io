@@ -1,30 +1,18 @@
 /* ================================================================
    javascript.js — Funcionalidad de Dairy & Marco
-   ================================================================
-   ESTRUCTURA DE ESTE ARCHIVO:
-     1.  Selección de elementos del HTML
-     2.  Estado global (datos que cambian mientras se usa la página)
-     3.  Filtro de categorías (botones Dulces, Bebidas, Otros)
-     4.  Contador de cantidad por producto (+/-)
-     5.  Actualización de la barra flotante de pedido
-     6.  Apertura y cierre del modal
-     7.  Tooltip de ayuda para la dirección
-     8.  Validación y envío del pedido por WhatsApp
-     9.  Inicialización (mostrar categoría inicial al cargar)
+   VERSIÓN CON CARGA DE PRODUCTOS DESDE JSON
    ================================================================ */
 
 
 /* ----------------------------------------------------------------
    1. SELECCIÓN DE ELEMENTOS DEL HTML
-   Aquí guardamos referencias a los elementos que vamos a usar.
-   Si cambias un id en el HTML, también cámbialo aquí.
    ---------------------------------------------------------------- */
 
 // Botones de categoría (Dulces, Bebidas, Otros)
 var botonesCategoria = document.querySelectorAll('.cat-btn');
 
-// Todas las tarjetas de producto
-var tarjetasProducto = document.querySelectorAll('.product-card');
+// Contenedor donde van los productos
+var productGrid = document.getElementById('product-grid');
 
 // Barra flotante de pedido
 var barraFlotante   = document.getElementById('order-bar');
@@ -50,117 +38,184 @@ var botonAyuda      = document.getElementById('help-dir-btn');
 
 /* ----------------------------------------------------------------
    2. ESTADO GLOBAL
-   Variables que guardan la información actual de la página.
-   No necesitas cambiar esto.
    ---------------------------------------------------------------- */
 
-// Categoría actualmente visible (debe coincidir con un data-target de los botones)
 var categoriaActual = 'dulces';
-
-// Referencia al tooltip de ayuda (null si no está visible)
 var tooltipActual = null;
+var MAX_UNIDADES = 50;
+var todosLosProductos = [];  // Aquí se guardan los productos cargados del JSON
 
 
 /* ================================================================
-   3. FILTRO DE CATEGORÍAS
-   Al hacer clic en un botón (Dulces, Bebidas, Otros):
-     - Se marca como activo
-     - Se muestran solo los productos de esa categoría
-     - Los demás se ocultan
+   3. CARGAR PRODUCTOS DESDE JSON
    ================================================================ */
 
-function activarCategoria(categoriaSeleccionada) {
-  categoriaActual = categoriaSeleccionada;
+function cargarProductos() {
+  fetch('productos.json')
+    .then(function(respuesta) {
+      if (!respuesta.ok) {
+        throw new Error('No se pudo cargar productos.json');
+      }
+      return respuesta.json();
+    })
+    .then(function(productos) {
+      todosLosProductos = productos;
+      renderizarProductos(productos);
+      inicializarContadores();
+      inicializarFiltros();
+    })
+    .catch(function(error) {
+      console.error('Error:', error);
+      if (productGrid) {
+        productGrid.innerHTML = '<p class="error-message">❌ Error al cargar productos. Verifica que el archivo productos.json existe.</p>';
+      }
+    });
+}
 
-  // Actualizar clases de los botones
-  botonesCategoria.forEach(function(btn) {
-    var esteEsElActivo = btn.dataset.target === categoriaSeleccionada;
-    btn.classList.toggle('active', esteEsElActivo);
-    btn.setAttribute('aria-selected', esteEsElActivo ? 'true' : 'false');
-  });
 
-  // Mostrar u ocultar tarjetas según su categoría
-  tarjetasProducto.forEach(function(tarjeta) {
-    var esDeLaCategoria = tarjeta.dataset.category === categoriaSeleccionada;
-    tarjeta.classList.toggle('hidden', !esDeLaCategoria);
+/* ================================================================
+   4. RENDERIZAR PRODUCTOS EN LA PÁGINA
+   ================================================================ */
+
+function renderizarProductos(productos) {
+  if (!productGrid) return;
+  
+  productGrid.innerHTML = '';
+  
+  productos.forEach(function(prod, index) {
+    var tarjeta = document.createElement('article');
+    tarjeta.className = 'product-card';
+    tarjeta.setAttribute('data-category', prod.category);
+    tarjeta.setAttribute('data-name', prod.name);
+    tarjeta.setAttribute('data-price', prod.price);
+    tarjeta.setAttribute('data-index', index);
+    
+    tarjeta.innerHTML = `
+      <img src="${prod.image}" alt="${prod.name}" class="product-img" />
+      <div class="product-info">
+        <h2 class="product-name">${escapeHTML(prod.name)}</h2>
+        <p class="product-price">$${prod.price.toFixed(2)}</p>
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+          <span class="qty-value">0</span>
+          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+      </div>
+    `;
+    
+    productGrid.appendChild(tarjeta);
   });
 }
 
-// Escuchar clics en los botones de categoría
-botonesCategoria.forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    activarCategoria(btn.dataset.target);
+function escapeHTML(texto) {
+  if (!texto) return '';
+  return texto.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
   });
-});
+}
 
 
 /* ================================================================
-   4. CONTADOR DE CANTIDAD (+/-)
+   5. INICIALIZAR CONTADORES (+/-)
    ================================================================ */
 
-// Recorre todas las tarjetas y agrega los eventos a sus botones
-tarjetasProducto.forEach(function(tarjeta) {
-
-  var botonMenos  = tarjeta.querySelector('.qty-minus');
-  var botonMas    = tarjeta.querySelector('.qty-plus');
-  var spanCantidad = tarjeta.querySelector('.qty-value');
-
-  // Botón − : resta 1 (mínimo 0)
-  botonMenos.addEventListener('click', function() {
-    var cantidadActual = parseInt(spanCantidad.textContent, 10);
-    if (cantidadActual > 0) {
-      spanCantidad.textContent = cantidadActual - 1;
-    }
-    actualizarEstadoTarjeta(tarjeta, spanCantidad);
-    actualizarBarraFlotante();
-  });
-
-  // Botón + : suma 1 (máximo 50 unidades)
-  botonMas.addEventListener('click', function() {
-    var cantidadActual = parseInt(spanCantidad.textContent, 10);
-    console.log('Cantidad actual:', cantidadActual); // 👈 Ver en consola
-    if (cantidadActual < 50) {
-      spanCantidad.textContent = cantidadActual + 1;
+function inicializarContadores() {
+  var todasLasTarjetas = document.querySelectorAll('.product-card');
+  
+  todasLasTarjetas.forEach(function(tarjeta) {
+    var botonMenos = tarjeta.querySelector('.qty-minus');
+    var botonMas = tarjeta.querySelector('.qty-plus');
+    var spanCantidad = tarjeta.querySelector('.qty-value');
+    
+    // Botón −
+    botonMenos.addEventListener('click', function() {
+      var cantidadActual = parseInt(spanCantidad.textContent, 10);
+      if (cantidadActual > 0) {
+        spanCantidad.textContent = cantidadActual - 1;
+      }
       actualizarEstadoTarjeta(tarjeta, spanCantidad);
       actualizarBarraFlotante();
-    }
+    });
+    
+    // Botón + (con límite de 50)
+    botonMas.addEventListener('click', function() {
+      var cantidadActual = parseInt(spanCantidad.textContent, 10);
+      if (cantidadActual < MAX_UNIDADES) {
+        spanCantidad.textContent = cantidadActual + 1;
+        actualizarEstadoTarjeta(tarjeta, spanCantidad);
+        actualizarBarraFlotante();
+      } else {
+        alert('⚠️ Máximo ' + MAX_UNIDADES + ' unidades por producto.');
+      }
+    });
   });
-});
+}
 
-// Agrega o quita la clase "has-qty" (borde dorado) según si hay cantidad > 0
 function actualizarEstadoTarjeta(tarjeta, spanCantidad) {
   var cantidad = parseInt(spanCantidad.textContent, 10);
   tarjeta.classList.toggle('has-qty', cantidad > 0);
 }
 
+
 /* ================================================================
-   5. BARRA FLOTANTE DE PEDIDO
-   Calcula el total de todos los productos seleccionados
-   y muestra u oculta la barra según si hay artículos.
+   6. FILTRO DE CATEGORÍAS
+   ================================================================ */
+
+function inicializarFiltros() {
+  var todasLasTarjetas = document.querySelectorAll('.product-card');
+  
+  // Escuchar clics en los botones de categoría
+  botonesCategoria.forEach(function(btn) {
+    // Remover eventos anteriores para evitar duplicados
+    btn.removeEventListener('click', btn.clickHandler);
+    
+    btn.clickHandler = function() {
+      var target = btn.getAttribute('data-target');
+      categoriaActual = target;
+      
+      // Actualizar clases de los botones
+      botonesCategoria.forEach(function(b) {
+        var esActivo = b.getAttribute('data-target') === target;
+        b.classList.toggle('active', esActivo);
+        b.setAttribute('aria-selected', esActivo ? 'true' : 'false');
+      });
+      
+      // Filtrar tarjetas
+      todasLasTarjetas.forEach(function(tarjeta) {
+        var esDeCategoria = tarjeta.getAttribute('data-category') === target;
+        tarjeta.classList.toggle('hidden', !esDeCategoria);
+      });
+    };
+    
+    btn.addEventListener('click', btn.clickHandler);
+  });
+}
+
+
+/* ================================================================
+   7. BARRA FLOTANTE DE PEDIDO
    ================================================================ */
 
 function actualizarBarraFlotante() {
   var totalArticulos = 0;
-  var totalPrecio    = 0;
-
-  // Recorre todas las tarjetas y suma cantidades y precios
-  tarjetasProducto.forEach(function(tarjeta) {
+  var totalPrecio = 0;
+  var todasLasTarjetas = document.querySelectorAll('.product-card');
+  
+  todasLasTarjetas.forEach(function(tarjeta) {
     var spanCantidad = tarjeta.querySelector('.qty-value');
-    var cantidad     = parseInt(spanCantidad.textContent, 10);
-    var precio       = parseFloat(tarjeta.dataset.price);  // viene de data-price en el HTML
-
+    var cantidad = parseInt(spanCantidad.textContent, 10);
+    var precio = parseFloat(tarjeta.getAttribute('data-price'));
+    
     totalArticulos += cantidad;
-    totalPrecio    += cantidad * precio;
+    totalPrecio += cantidad * precio;
   });
-
-  // Actualizar textos en la barra
-  textoContador.textContent = totalArticulos === 1
-    ? '1 artículo'
-    : totalArticulos + ' artículos';
-
+  
+  textoContador.textContent = totalArticulos === 1 ? '1 artículo' : totalArticulos + ' artículos';
   textoTotal.textContent = '$' + totalPrecio.toFixed(2);
-
-  // Mostrar u ocultar la barra flotante
+  
   if (totalArticulos > 0) {
     barraFlotante.classList.add('visible');
     barraFlotante.setAttribute('aria-hidden', 'false');
@@ -172,31 +227,24 @@ function actualizarBarraFlotante() {
 
 
 /* ================================================================
-   6. MODAL — ABRIR Y CERRAR
-   El modal se abre al presionar "Enviar pedido" y
-   se cierra con el botón X o haciendo clic fuera del modal.
+   8. MODAL — ABRIR Y CERRAR
    ================================================================ */
 
-// Abrir modal al presionar el botón de WhatsApp en la barra flotante
 botonWhatsApp.addEventListener('click', function() {
   fondoModal.classList.add('open');
   fondoModal.setAttribute('aria-hidden', 'false');
-  mensajeError.textContent = '';  // limpiar error anterior
-  campNombre.focus();             // poner el cursor en el primer campo
+  mensajeError.textContent = '';
+  campNombre.focus();
 });
 
-// Cerrar modal con el botón X
 botonCerrar.addEventListener('click', cerrarModal);
 
-// Cerrar modal al hacer clic en el fondo oscuro (fuera de la caja)
 fondoModal.addEventListener('click', function(evento) {
-  // Solo cerrar si el clic fue directamente en el fondo, no en la caja del modal
   if (evento.target === fondoModal) {
     cerrarModal();
   }
 });
 
-// Cerrar modal con la tecla Escape
 document.addEventListener('keydown', function(evento) {
   if (evento.key === 'Escape' && fondoModal.classList.contains('open')) {
     cerrarModal();
@@ -210,46 +258,33 @@ function cerrarModal() {
 
 
 /* ================================================================
-   7. TOOLTIP DE AYUDA ❕ (campo de dirección)
-   Al hacer clic en ❕ aparece una burbuja con consejos.
-   Desaparece automáticamente después de 5 segundos
-   o al hacer clic fuera de ella.
+   9. TOOLTIP DE AYUDA ❕
    ================================================================ */
 
 function mostrarTooltipAyuda(evento) {
-  // Si ya hay un tooltip visible, eliminarlo primero
   if (tooltipActual) {
     tooltipActual.remove();
     tooltipActual = null;
   }
-
-  // Crear el elemento del tooltip
+  
   tooltipActual = document.createElement('div');
   tooltipActual.className = 'help-tooltip';
-
-  // CAMBIAR: puedes modificar el texto de los consejos aquí
-  tooltipActual.innerHTML =
-    '📌 <strong>Consejos para tu dirección:</strong><br><br>' +
+  tooltipActual.innerHTML = '📌 <strong>Consejos para tu dirección:</strong><br><br>' +
     '• Incluye: calle, número, reparto y ciudad.<br>' +
     '• Agrega una referencia cercana si puedes.<br>' +
     '• Ejemplo: "Calle 13 #45 e/ 2da y 3ra, Reparto José Martí".<br><br>' +
     '✨ ¡Así recibirás tu pedido sin demoras!';
-
+  
   document.body.appendChild(tooltipActual);
-
-  // Posicionar el tooltip debajo del botón ❕
+  
   var posicionBoton = botonAyuda.getBoundingClientRect();
-  tooltipActual.style.top  = (posicionBoton.bottom + 8) + 'px';
+  tooltipActual.style.top = (posicionBoton.bottom + 8) + 'px';
   tooltipActual.style.left = (posicionBoton.left - 20) + 'px';
-
-  // Mostrar con animación (pequeño retraso para que la transición funcione)
+  
   setTimeout(function() {
-    if (tooltipActual) {
-      tooltipActual.classList.add('show');
-    }
+    if (tooltipActual) tooltipActual.classList.add('show');
   }, 10);
-
-  // Ocultar automáticamente después de 5 segundos
+  
   setTimeout(function() {
     ocultarTooltip();
   }, 5000);
@@ -258,7 +293,6 @@ function mostrarTooltipAyuda(evento) {
 function ocultarTooltip() {
   if (!tooltipActual) return;
   tooltipActual.classList.remove('show');
-  // Eliminar del DOM después de que termine la transición
   setTimeout(function() {
     if (tooltipActual) {
       tooltipActual.remove();
@@ -267,12 +301,10 @@ function ocultarTooltip() {
   }, 250);
 }
 
-// Mostrar tooltip al hacer clic en ❕
 if (botonAyuda) {
   botonAyuda.addEventListener('click', mostrarTooltipAyuda);
 }
 
-// Ocultar tooltip al hacer clic en cualquier otro lugar
 document.addEventListener('click', function(evento) {
   if (tooltipActual && evento.target !== botonAyuda) {
     ocultarTooltip();
@@ -281,90 +313,55 @@ document.addEventListener('click', function(evento) {
 
 
 /* ================================================================
-   8. VALIDACIÓN Y ENVÍO DEL PEDIDO POR WHATSAPP
-   Al presionar "Enviar pedido por WhatsApp":
-     1. Valida que los campos obligatorios estén llenos
-     2. Construye un resumen de los productos seleccionados
-     3. Arma el mensaje con todos los datos
-     4. Abre WhatsApp con ese mensaje listo para enviar
+   10. VALIDACIÓN Y ENVÍO POR WHATSAPP
    ================================================================ */
 
 botonEnviar.addEventListener('click', function() {
-
-  // ── VALIDACIÓN DE CAMPOS OBLIGATORIOS ──────────────────────────
-  // Para hacer un campo NO obligatorio: elimina su línea de aquí.
-  // Para agregar uno nuevo: copia una línea y cambia la variable.
-  var nombre    = campNombre.textContent    || campNombre.value.trim();
-  var telefono  = campTelefono.textContent  || campTelefono.value.trim();
-  var direccion = campDireccion.textContent || campDireccion.value.trim();
-  var tarjeta   = campTarjeta.textContent   || campTarjeta.value.trim();
-
-  // Leer valores de los inputs
-  nombre    = campNombre.value.trim();
-  telefono  = campTelefono.value.trim();
-  direccion = campDireccion.value.trim();
-  tarjeta   = campTarjeta.value.trim();
-
-  // Verificar que ningún campo obligatorio esté vacío
+  var nombre = campNombre.value.trim();
+  var telefono = campTelefono.value.trim();
+  var direccion = campDireccion.value.trim();
+  var tarjeta = campTarjeta.value.trim();
+  
   if (!nombre || !telefono || !direccion || !tarjeta) {
-    // CAMBIAR: puedes personalizar este mensaje de error
     mensajeError.textContent = '⚠️ Por favor, completa todos los campos.';
-    return;  // detener el envío si falta algo
+    return;
   }
-
-  mensajeError.textContent = ''; // limpiar error si todo está bien
-
-  // ── CONSTRUCCIÓN DEL RESUMEN DE PRODUCTOS ──────────────────────
+  
+  mensajeError.textContent = '';
+  
   var lineasProductos = [];
-  var totalPrecio     = 0;
-
-  tarjetasProducto.forEach(function(tarjeta) {
+  var totalPrecio = 0;
+  var todasLasTarjetas = document.querySelectorAll('.product-card');
+  
+  todasLasTarjetas.forEach(function(tarjeta) {
     var cantidad = parseInt(tarjeta.querySelector('.qty-value').textContent, 10);
     if (cantidad > 0) {
-      var nombreProducto = tarjeta.dataset.name;
-      var precio         = parseFloat(tarjeta.dataset.price);
-      var subtotal       = cantidad * precio;
-      totalPrecio       += subtotal;
-
-      // Formato: "• 2x Maní Molido — $240.00"
-      lineasProductos.push(
-        '• ' + cantidad + 'x ' + nombreProducto + ' — $' + subtotal.toFixed(2)
-      );
+      var nombreProducto = tarjeta.getAttribute('data-name');
+      var precio = parseFloat(tarjeta.getAttribute('data-price'));
+      var subtotal = cantidad * precio;
+      totalPrecio += subtotal;
+      lineasProductos.push('• ' + cantidad + 'x ' + nombreProducto + ' — $' + subtotal.toFixed(2));
     }
   });
-
-  // ── ARMADO DEL MENSAJE ─────────────────────────────────────────
-  // CAMBIAR: puedes modificar el formato del mensaje que se envía por WhatsApp
-  var mensaje =
-    '🛒 *NUEVO PEDIDO — Dairy & Marco*\n\n' +
-
+  
+  var mensaje = '🛒 *NUEVO PEDIDO — Dairy & Marco*\n\n' +
     '👤 *Nombre:* ' + nombre + '\n' +
     '📞 *Teléfono:* ' + telefono + '\n' +
     '📍 *Dirección:* ' + direccion + '\n' +
     '💳 *Últimos 4 de tarjeta:* ' + tarjeta + '\n\n' +
-
-    '📦 *Productos:*\n' +
-    lineasProductos.join('\n') + '\n\n' +
-
+    '📦 *Productos:*\n' + lineasProductos.join('\n') + '\n\n' +
     '💰 *Total: $' + totalPrecio.toFixed(2) + '*';
-
-  // ── ABRIR WHATSAPP ─────────────────────────────────────────────
-  // El número viene del atributo data-phone del botón en el HTML
+  
   var numeroWhatsApp = botonWhatsApp.dataset.phone;
-  var mensajeCodificado = encodeURIComponent(mensaje);
-  var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + mensajeCodificado;
-
-  window.open(urlWhatsApp, '_blank');  // abre WhatsApp en una nueva pestaña
+  var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
+  
+  window.open(urlWhatsApp, '_blank');
   cerrarModal();
 });
 
 
 /* ================================================================
-   9. INICIALIZACIÓN
-   Se ejecuta al cargar la página.
-   Muestra la primera categoría (dulces por defecto).
+   11. INICIALIZACIÓN PRINCIPAL
    ================================================================ */
 
-// CAMBIAR: si quieres que se muestre otra categoría al cargar,
-// cambia 'dulces' por el nombre de la categoría deseada
-activarCategoria('dulces');
+cargarProductos();
