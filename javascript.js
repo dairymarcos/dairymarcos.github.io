@@ -96,11 +96,6 @@ botonesCategoria.forEach(function(btn) {
 
 /* ================================================================
    4. CONTADOR DE CANTIDAD (+/-)
-   Cada tarjeta tiene botones + y − para cambiar la cantidad.
-   Al cambiar la cantidad:
-     - Se actualiza el número visible en la tarjeta
-     - Se aplica o quita el borde dorado de "seleccionado"
-     - Se recalcula el total en la barra flotante
    ================================================================ */
 
 // Recorre todas las tarjetas y agrega los eventos a sus botones
@@ -121,14 +116,15 @@ tarjetasProducto.forEach(function(tarjeta) {
   });
 
   // Botón + : suma 1 (máximo 50 unidades)
-botonMas.addEventListener('click', function() {
-  var cantidadActual = parseInt(spanCantidad.textContent, 10);
-  if (cantidadActual < 50) {  // ✅ LÍMITE DE 50 UNIDADES
-    spanCantidad.textContent = cantidadActual + 1;
-    actualizarEstadoTarjeta(tarjeta, spanCantidad);
-    actualizarBarraFlotante();
-  }
-});
+  botonMas.addEventListener('click', function() {
+    var cantidadActual = parseInt(spanCantidad.textContent, 10);
+    console.log('Cantidad actual:', cantidadActual); // 👈 Ver en consola
+    if (cantidadActual < 50) {
+      spanCantidad.textContent = cantidadActual + 1;
+      actualizarEstadoTarjeta(tarjeta, spanCantidad);
+      actualizarBarraFlotante();
+    }
+  });
 });
 
 // Agrega o quita la clase "has-qty" (borde dorado) según si hay cantidad > 0
@@ -136,7 +132,6 @@ function actualizarEstadoTarjeta(tarjeta, spanCantidad) {
   var cantidad = parseInt(spanCantidad.textContent, 10);
   tarjeta.classList.toggle('has-qty', cantidad > 0);
 }
-
 
 /* ================================================================
    5. BARRA FLOTANTE DE PEDIDO
