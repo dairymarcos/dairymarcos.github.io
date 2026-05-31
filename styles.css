@@ -631,23 +631,6 @@ img {
   transform: scale(0.97);
 }
 
-/* Botón de ayuda ❕ */
-.help-btn {
-  cursor:        pointer;
-  background:    transparent;
-  border:        none;
-  font-size:     1rem;
-  padding:       2px 6px;
-  border-radius: 50%;
-  transition:    background var(--transition);
-  line-height:   1;
-}
-
-.help-btn:hover {
-  background: rgba(255, 255, 255, .08);
-}
-
-
 /* ----------------------------------------------------------------
    10. PIE DE PÁGINA
    ---------------------------------------------------------------- */
