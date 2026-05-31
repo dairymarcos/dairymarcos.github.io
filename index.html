@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       TÍTULO DE LA PESTAÑA DEL NAVEGADOR
+       Cambia "Dairy & Marco" por el nombre de tu negocio
+       ============================================================ -->
+  <title>Dairy &amp; Marco</title>
+
+  <!-- Fuentes de Google (Playfair Display para títulos, Lato para texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- Archivo de estilos -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+
+  <!-- ============================================================
+       SECCIÓN 1: CABECERA
+       — Foto de portada del negocio (img/portada.jpeg)
+       — Nombre del negocio debajo de la foto
+       ============================================================ -->
+  <header class="site-header">
+
+    <!-- Foto de portada -->
+    <div class="hero-image-wrapper">
+      <!-- CAMBIAR: reemplaza "img/portada.jpeg" con la ruta de tu foto de portada -->
+      <img src="img/portada.jpeg" alt="Foto del negocio" class="hero-image" />
+      <!-- Capa oscura semitransparente sobre la foto -->
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Nombre del negocio -->
+    <div class="business-name-wrap">
+      <h1 class="business-name">
+        <!-- CAMBIAR: escribe aquí el nombre de tu negocio -->
+        <span class="name-main">Dairy &amp; Marco</span>
+        <!-- CAMBIAR: subtítulo opcional (ej: "Dulces artesanales"). Déjalo vacío si no quieres subtítulo -->
+        <span class="name-sub"></span>
+      </h1>
+    </div>
+
+  </header>
+
+
+  <!-- ============================================================
+       SECCIÓN 2: MENÚ DE CATEGORÍAS
+       Los botones filtran los productos por categoría.
+       — data-target debe coincidir con data-category de los productos
+       — El botón con clase "active" es el que aparece seleccionado al cargar
+       ============================================================ -->
+  <nav class="category-nav" role="tablist" aria-label="Categorías del menú">
+
+    <!-- CAMBIAR: puedes renombrar las categorías o agregar más botones copiando uno -->
+    <button class="cat-btn active" data-target="dulces"  role="tab" aria-selected="true"  aria-controls="product-grid">Dulces</button>
+    <button class="cat-btn"        data-target="bebidas" role="tab" aria-selected="false" aria-controls="product-grid">Bebidas</button>
+    <button class="cat-btn"        data-target="otros"   role="tab" aria-selected="false" aria-controls="product-grid">Otros</button>
+
+  </nav>
+
+
+  <!-- ============================================================
+       SECCIÓN 3: CUADRÍCULA DE PRODUCTOS
+       Cada <article> es una tarjeta de producto.
+
+       ATRIBUTOS IMPORTANTES de cada <article>:
+         data-category → debe coincidir con el data-target del botón (ej: "dulces")
+         data-name     → nombre que aparece en el mensaje de WhatsApp
+         data-price    → precio numérico SIN símbolo (ej: 120.00)
+
+       PARA AGREGAR UN PRODUCTO NUEVO:
+         1. Copia un bloque <article> completo
+         2. Pégalo debajo del último artículo de su categoría
+         3. Cambia: data-category, data-name, data-price, src de la img, alt, h2 y p del precio
+  ============================================================ -->
+  <main id="product-grid" class="product-grid" role="tabpanel">
+
+
+    <!-- ─────────────────────────────────────────────────────────
+         CATEGORÍA: DULCES
+    ──────────────────────────────────────────────────────────── -->
+
+    <article class="product-card"
+             data-category="dulces"
+             data-name="Maní Molido"
+             data-price="120.00">
+      <!-- CAMBIAR: ruta de la imagen del producto -->
+      <img src="img/maniC.jpg" alt="Maní Molido" class="product-img" />
+      <div class="product-info">
+        <!-- CAMBIAR: nombre visible del producto -->
+        <h2 class="product-name">Maní Molido</h2>
+        <!-- CAMBIAR: precio visible (con símbolo $) -->
+        <p class="product-price">$120.00</p>
+        <!-- Control de cantidad — no necesitas modificar esto -->
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+          <span class="qty-value">0</span>
+          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="product-card"
+             data-category="dulces"
+             data-name="Cremita de Leche"
+             data-price="60.00">
+      <img src="img/cremitaLeche.webp" alt="Cremita de leche" class="product-img" />
+      <div class="product-info">
+        <h2 class="product-name">Cremita de Leche</h2>
+        <p class="product-price">$60.00</p>
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+          <span class="qty-value">0</span>
+          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+      </div>
+    </article>
+
+
+    <!-- ─────────────────────────────────────────────────────────
+         CATEGORÍA: BEBIDAS
+    ──────────────────────────────────────────────────────────── -->
+
+    <article class="product-card"
+             data-category="bebidas"
+             data-name="Refresco de Lata Naranja"
+             data-price="250.00">
+      <img src="img/refrescoLataNaranja.jpg" alt="Refresco de Lata Naranja" class="product-img" />
+      <div class="product-info">
+        <h2 class="product-name">Refresco de Lata Naranja</h2>
+        <p class="product-price">$250.00</p>
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+          <span class="qty-value">0</span>
+          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+      </div>
+    </article>
+
+
+    <!-- ─────────────────────────────────────────────────────────
+         CATEGORÍA: OTROS
+         (ejemplo comentado — descomenta para activar)
+    ──────────────────────────────────────────────────────────── -->
+
+    <!--
+    <article class="product-card"
+             data-category="otros"
+             data-name="Producto de Ejemplo"
+             data-price="100.00">
+      <img src="img/ejemplo.jpg" alt="Ejemplo de producto" class="product-img" />
+      <div class="product-info">
+        <h2 class="product-name">Producto de Ejemplo</h2>
+        <p class="product-price">$100.00</p>
+        <div class="qty-control">
+          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+          <span class="qty-value">0</span>
+          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+      </div>
+    </article>
+    -->
+
+  </main>
+
+
+  <!-- ============================================================
+       SECCIÓN 4: BARRA FLOTANTE DE PEDIDO
+       Aparece en la parte inferior cuando hay al menos 1 producto seleccionado.
+
+       ★ IMPORTANTE: cambia el número de WhatsApp en data-phone
+         Formato: código de país + número SIN espacios ni guiones
+         Ejemplo Cuba: "5359638868"
+  ============================================================ -->
+  <div class="order-bar" id="order-bar" aria-live="polite" aria-hidden="true">
+
+    <!-- Resumen: cantidad de artículos y total -->
+    <div class="order-bar-info">
+      <span class="order-count" id="order-count">0 artículos</span>
+      <span class="order-total" id="order-total">$0.00</span>
+    </div>
+
+    <!-- CAMBIAR: pon tu número en data-phone -->
+    <button class="whatsapp-btn" id="whatsapp-btn" data-phone="5359638868">
+      <!-- Ícono de WhatsApp (SVG) — no necesitas cambiar esto -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Enviar pedido
+    </button>
+
+  </div>
+
+
+  <!-- ============================================================
+       SECCIÓN 5: MODAL DE DATOS DEL CLIENTE
+       Aparece al presionar "Enviar pedido".
+       El cliente llena sus datos y luego se envía todo por WhatsApp.
+
+       PARA AGREGAR UN CAMPO NUEVO:
+         1. Copia un bloque <div class="field-group">...</div>
+         2. Pégalo antes del <p class="modal-error">
+         3. Cambia el id (ej: "input-notas"), el label y el placeholder
+         4. Si es obligatorio, agrégalo también en javascript.js
+            (busca el comentario: "VALIDACIÓN DE CAMPOS OBLIGATORIOS")
+  ============================================================ -->
+  <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <!-- Botón cerrar -->
+      <button class="modal-close" id="modal-close" aria-label="Cerrar">✕</button>
+
+      <!-- Título y subtítulo del modal -->
+      <h2 class="modal-title" id="modal-title">Tus datos de entrega</h2>
+      <p class="modal-subtitle">Necesitamos estos datos para enviarte tu pedido.</p>
+
+      <!-- Campo: Nombre del cliente -->
+      <div class="field-group">
+        <label class="field-label" for="input-nombre">👤 Tu nombre</label>
+        <input class="field-input" id="input-nombre" type="text"
+               placeholder="Ej. María García" autocomplete="name" />
+      </div>
+
+      <!-- Campo: Teléfono del cliente -->
+      <div class="field-group">
+        <label class="field-label" for="input-tel">📞 Tu número de teléfono</label>
+        <input class="field-input" id="input-tel" type="tel"
+               placeholder="Ej. 5963-8868" autocomplete="tel" />
+      </div>
+
+      <!-- Campo: Dirección con botón de ayuda -->
+      <div class="field-group">
+        <div class="field-label-row">
+          <label class="field-label" for="input-dir">📍 Dirección de entrega</label>
+          <!-- Botón ❕ que muestra un tooltip con consejos para escribir la dirección -->
+          <button type="button" class="help-btn" id="help-dir-btn" aria-label="Ayuda con la dirección">❕</button>
+        </div>
+        <input class="field-input" id="input-dir" type="text"
+               placeholder="Ej. Reparto José Martí, calle 13 #45" autocomplete="street-address" />
+      </div>
+
+      <!-- Campo: Últimos 4 dígitos de la tarjeta (obligatorio) -->
+      <div class="field-group">
+        <label class="field-label" for="input-tarjeta">💳 Últimos 4 números de la tarjeta</label>
+        <input class="field-input" id="input-tarjeta" type="text"
+               placeholder="Ej. XXXX-XXXX-XXXX-6256" autocomplete="off" />
+      </div>
+
+      <!-- Mensaje de error — aparece si faltan campos obligatorios -->
+      <p class="modal-error" id="modal-error" aria-live="assertive"></p>
+
+      <!-- Botón final: envía el pedido por WhatsApp -->
+      <button class="modal-send-btn" id="modal-send-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Enviar pedido por WhatsApp
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECCIÓN 6: PIE DE PÁGINA
+       CAMBIAR: actualiza la dirección y el teléfono de tu negocio
+  ============================================================ -->
+  <footer class="site-footer">
+    <!-- CAMBIAR: tu dirección -->
+    <p class="footer-item">
+      <span class="footer-icon">📍</span>
+      <span>Reparto José Martí</span>
+    </p>
+    <!-- CAMBIAR: tu teléfono -->
+    <p class="footer-item">
+      <span class="footer-icon">📞</span>
+      <span>+53 59638868</span>
+    </p>
+  </footer>
+
+
+  <!-- Archivo JavaScript (siempre al final del body) -->
+  <script src="javascript.js"></script>
+
+</body>
+</html>

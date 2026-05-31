@@ -1,0 +1,764 @@
+/* ================================================================
+   styles.css — Estilos de Dairy & Marco
+   ================================================================
+   ESTRUCTURA DE ESTE ARCHIVO:
+     1.  Variables globales (colores, fuentes, sombras)
+     2.  Reset y base
+     3.  Cabecera (foto de portada + nombre)
+     4.  Navegación de categorías
+     5.  Cuadrícula de productos
+     6.  Tarjeta de producto
+     7.  Contador de cantidad (+/-)
+     8.  Barra flotante de pedido
+     9.  Modal de datos del cliente
+     10. Pie de página
+     11. Tooltip de ayuda para la dirección
+     12. Animaciones
+     13. Diseño responsive (móvil)
+   ================================================================ */
+
+
+/* ----------------------------------------------------------------
+   1. VARIABLES GLOBALES
+   Cambia los colores de toda la página desde aquí.
+   Los nombres describen para qué se usa cada variable.
+   ---------------------------------------------------------------- */
+:root {
+  /* Colores de fondo */
+  --color-bg:          #0f0e0c;   /* fondo general de la página */
+  --color-surface:     #1a1814;   /* fondo de las tarjetas */
+  --color-surface-alt: #211f1b;   /* fondo alternativo (nav, footer, modal) */
+  --color-border:      #2e2b26;   /* color de los bordes */
+
+  /* Color de acento (dorado) — cambia este para cambiar el color principal */
+  --color-accent:      #c8943a;   /* dorado vibrante */
+  --color-accent-dim:  #a07228;   /* dorado más oscuro (bordes, hovers) */
+
+  /* Colores de texto */
+  --color-text-primary:   #f0e8d8;  /* texto principal (claro) */
+  --color-text-secondary: #9e9080;  /* texto secundario (grisáceo) */
+  --color-text-price:     #e0a84a;  /* color del precio del producto */
+
+  /* Fuentes */
+  --font-display: 'Playfair Display', Georgia, serif;  /* títulos elegantes */
+  --font-body:    'Lato', sans-serif;                  /* texto general */
+
+  /* Bordes redondeados */
+  --radius-card: 12px;   /* esquinas de las tarjetas */
+  --radius-btn:  30px;   /* esquinas de los botones de categoría */
+
+  /* Sombras */
+  --shadow-card:  0 4px 24px rgba(0, 0, 0, .45);
+  --shadow-hover: 0 8px 36px rgba(200, 148, 58, .18);
+
+  /* Velocidad de las animaciones (transiciones) */
+  --transition: 0.25s ease;
+}
+
+
+/* ----------------------------------------------------------------
+   2. RESET Y BASE
+   Elimina márgenes/padding por defecto del navegador.
+   ---------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* desplazamiento suave al hacer clic en anclas */
+}
+
+body {
+  background:   var(--color-bg);
+  color:        var(--color-text-primary);
+  font-family:  var(--font-body);
+  font-size:    16px;
+  line-height:  1.6;
+  min-height:   100vh;
+  padding-bottom: 80px; /* espacio para que la barra flotante no tape el footer */
+}
+
+img {
+  display:   block;
+  max-width: 100%;
+}
+
+
+/* ----------------------------------------------------------------
+   3. CABECERA — foto de portada y nombre del negocio
+   ---------------------------------------------------------------- */
+.site-header {
+  width: 100%;
+}
+
+/* Contenedor de la imagen de portada */
+.hero-image-wrapper {
+  position: relative;
+  width:    100%;
+  height:   320px;   /* CAMBIAR: altura de la foto de portada */
+  overflow: hidden;
+}
+
+/* La imagen de portada */
+.hero-image {
+  width:           100%;
+  height:          100%;
+  object-fit:      cover;         /* recorta la imagen para llenar el espacio */
+  object-position: center;        /* centra la imagen */
+  transition:      transform .6s ease;
+}
+
+/* Efecto zoom suave al pasar el cursor sobre la foto */
+.hero-image-wrapper:hover .hero-image {
+  transform: scale(1.03);
+}
+
+/* Capa oscura sobre la foto (gradiente de arriba a abajo) */
+.hero-overlay {
+  position:   absolute;
+  inset:      0;   /* ocupa todo el contenedor */
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 14, 12, .1) 0%,
+    rgba(15, 14, 12, .6) 100%
+  );
+}
+
+/* Área debajo de la foto donde va el nombre */
+.business-name-wrap {
+  display:         flex;
+  justify-content: center;
+  align-items:     center;
+  padding:         28px 20px 20px;
+  border-bottom:   1px solid var(--color-border);
+  background:      linear-gradient(
+    to bottom,
+    rgba(30, 26, 20, .95),
+    var(--color-bg)
+  );
+}
+
+.business-name {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            4px;
+  text-align:     center;
+}
+
+/* Nombre principal del negocio — texto con gradiente dorado */
+.name-main {
+  font-family:    var(--font-display);
+  font-size:      clamp(2rem, 6vw, 3.6rem); /* tamaño fluido: mínimo 2rem, máximo 3.6rem */
+  font-weight:    900;
+  letter-spacing: .04em;
+  /* Gradiente de texto (dorado) */
+  background: linear-gradient(135deg, #f0d898 0%, #c8943a 45%, #e8c060 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtítulo debajo del nombre (opcional) */
+.name-sub {
+  font-family:    var(--font-body);
+  font-size:      clamp(.75rem, 2vw, 1rem);
+  font-weight:    300;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  -webkit-text-fill-color: var(--color-text-secondary); /* sobreescribe el gradiente */
+}
+
+
+/* ----------------------------------------------------------------
+   4. NAVEGACIÓN DE CATEGORÍAS
+   Barra con los botones para filtrar productos (Dulces, Bebidas, etc.)
+   ---------------------------------------------------------------- */
+.category-nav {
+  display:          flex;
+  justify-content:  center;
+  gap:              12px;
+  padding:          22px 16px;
+  background:       var(--color-surface-alt);
+  border-bottom:    1px solid var(--color-border);
+  overflow-x:       auto;             /* scroll horizontal en pantallas pequeñas */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Botón de categoría (estado normal) */
+.cat-btn {
+  cursor:         pointer;
+  white-space:    nowrap;
+  font-family:    var(--font-body);
+  font-size:      .88rem;
+  font-weight:    700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color:          var(--color-text-secondary);
+  background:     transparent;
+  border:         2px solid var(--color-border);
+  border-radius:  var(--radius-btn);
+  padding:        10px 26px;
+  transition:     color var(--transition),
+                  border-color var(--transition),
+                  background var(--transition),
+                  box-shadow var(--transition);
+}
+
+/* Botón al pasar el cursor */
+.cat-btn:hover {
+  color:        var(--color-accent);
+  border-color: var(--color-accent-dim);
+}
+
+/* Botón activo (categoría seleccionada) */
+.cat-btn.active {
+  color:        #0f0e0c;                         /* texto oscuro sobre fondo dorado */
+  background:   var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow:   0 0 18px rgba(200, 148, 58, .35); /* resplandor dorado */
+}
+
+
+/* ----------------------------------------------------------------
+   5. CUADRÍCULA DE PRODUCTOS
+   El grid que organiza todas las tarjetas en columnas.
+   ---------------------------------------------------------------- */
+.product-grid {
+  display:               grid;
+  /* auto-fill: crea columnas automáticamente; minmax: mínimo 260px, máximo 1fr */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:       28px;
+  padding:   40px 24px;
+  max-width: 1100px;  /* ancho máximo del contenido centrado */
+  margin:    0 auto;
+}
+
+/* Clase para ocultar productos que no pertenecen a la categoría activa */
+.product-card.hidden {
+  display: none;
+}
+
+
+/* ----------------------------------------------------------------
+   6. TARJETA DE PRODUCTO
+   Caja individual de cada producto con imagen, nombre y precio.
+   ---------------------------------------------------------------- */
+.product-card {
+  background:    var(--color-surface);
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow:      hidden;              /* la imagen no se sale de las esquinas redondeadas */
+  box-shadow:    var(--shadow-card);
+  transition:    transform var(--transition),
+                 box-shadow var(--transition),
+                 border-color var(--transition);
+  animation:     fadeUp .4s ease both; /* aparece con animación al cargar */
+}
+
+/* Tarjeta al pasar el cursor — se eleva ligeramente */
+.product-card:hover {
+  transform:    translateY(-5px);
+  box-shadow:   var(--shadow-hover);
+  border-color: var(--color-accent-dim);
+}
+
+/* Tarjeta con cantidad > 0 — borde dorado para resaltar la selección */
+.product-card.has-qty {
+  border-color: var(--color-accent);
+  box-shadow:   0 0 0 2px rgba(200, 148, 58, .3), var(--shadow-hover);
+}
+
+/* Imagen del producto */
+.product-img {
+  width:           100%;
+  height:          300px;  /* CAMBIAR: altura de las fotos de producto */
+  object-fit:      cover;
+  object-position: center;
+  transition:      transform .5s ease;
+}
+
+/* Zoom en la imagen al pasar el cursor sobre la tarjeta */
+.product-card:hover .product-img {
+  transform: scale(1.06);
+}
+
+/* Área de texto debajo de la imagen */
+.product-info {
+  padding:        16px 18px 20px;
+  display:        flex;
+  flex-direction: column;
+  gap:            8px;
+  text-align:     center;
+}
+
+/* Nombre del producto */
+.product-name {
+  font-family: var(--font-display);
+  font-size:   1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Precio del producto */
+.product-price {
+  font-size:   1.2rem;
+  font-weight: 700;
+  color:       var(--color-text-price);
+}
+
+
+/* ----------------------------------------------------------------
+   7. CONTADOR DE CANTIDAD — botones + y -
+   Controles para sumar o restar unidades de un producto.
+   ---------------------------------------------------------------- */
+.qty-control {
+  display:       flex;
+  align-items:   center;
+  border:        1.5px solid var(--color-border);
+  border-radius: 10px;
+  overflow:      hidden;
+  width:         fit-content;   /* solo tan ancho como su contenido */
+  margin:        6px auto 0;    /* centrado horizontalmente */
+  background:    var(--color-surface-alt);
+}
+
+/* Botones − y + */
+.qty-btn {
+  cursor:          pointer;
+  width:           48px;   /* CAMBIAR: tamaño de los botones +/- */
+  height:          48px;
+  background:      transparent;
+  border:          none;
+  color:           var(--color-text-secondary);
+  font-size:       1.6rem;
+  line-height:     1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  transition:      background var(--transition), color var(--transition);
+  user-select:     none;  /* evita que se seleccione el texto al hacer clic */
+}
+
+/* Botón +/- al pasar el cursor */
+.qty-btn:hover {
+  background: var(--color-accent);
+  color:      #0f0e0c;
+}
+
+/* Efecto de pulsación */
+.qty-btn:active {
+  transform: scale(0.88);
+}
+
+/* Número del centro (cantidad actual) */
+.qty-value {
+  min-width:    44px;
+  text-align:   center;
+  font-size:    1.1rem;
+  font-weight:  700;
+  color:        var(--color-text-primary);
+  padding:      0 6px;
+  line-height:  48px;
+  border-left:  1.5px solid var(--color-border);
+  border-right: 1.5px solid var(--color-border);
+}
+
+
+/* ----------------------------------------------------------------
+   8. BARRA FLOTANTE DE PEDIDO
+   Aparece en la parte inferior cuando hay productos seleccionados.
+   ---------------------------------------------------------------- */
+.order-bar {
+  position:        fixed;
+  bottom:          0;
+  left:            0;
+  right:           0;
+  background:      #1c1a14;
+  border-top:      1px solid var(--color-accent-dim);
+  box-shadow:      0 -6px 28px rgba(0, 0, 0, .65);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             32px;
+  padding:         16px 28px;
+  /* Oculta la barra debajo de la pantalla por defecto */
+  transform:       translateY(110%);
+  transition:      transform .35s cubic-bezier(.34, 1.56, .64, 1); /* efecto rebote */
+  z-index:         100;  /* encima de todo lo demás */
+}
+
+/* Cuando el JS agrega la clase "visible", la barra sube */
+.order-bar.visible {
+  transform: translateY(0);
+}
+
+/* Columna izquierda: cantidad de artículos y total */
+.order-bar-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            1px;
+}
+
+.order-count {
+  font-size:      .78rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color:          var(--color-text-secondary);
+}
+
+.order-total {
+  font-family: var(--font-display);
+  font-size:   1.5rem;
+  font-weight: 700;
+  color:       var(--color-text-price);
+}
+
+/* Botón de WhatsApp */
+.whatsapp-btn {
+  cursor:         pointer;
+  display:        flex;
+  align-items:    center;
+  gap:            10px;
+  background:     linear-gradient(135deg, #25d366 0%, #128c52 100%); /* verde WhatsApp */
+  color:          #fff;
+  border:         none;
+  border-radius:  14px;
+  padding:        14px 30px;
+  font-family:    var(--font-body);
+  font-size:      1rem;
+  font-weight:    700;
+  letter-spacing: .03em;
+  box-shadow:     0 4px 20px rgba(37, 211, 102, .4);
+  transition:     transform var(--transition),
+                  box-shadow var(--transition),
+                  filter var(--transition);
+}
+
+.whatsapp-btn:hover {
+  filter:    brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(37, 211, 102, .55);
+}
+
+.whatsapp-btn:active {
+  transform: scale(0.96);
+}
+
+
+/* ----------------------------------------------------------------
+   9. MODAL — formulario de datos del cliente
+   Ventana emergente que aparece al presionar "Enviar pedido".
+   ---------------------------------------------------------------- */
+
+/* Fondo oscuro detrás del modal */
+.modal-backdrop {
+  position:        fixed;
+  inset:           0;   /* ocupa toda la pantalla */
+  background:      rgba(0, 0, 0, .75);
+  backdrop-filter: blur(4px);  /* desenfoca el fondo */
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  z-index:         200;  /* encima de la barra flotante */
+  /* Oculto por defecto */
+  opacity:        0;
+  pointer-events: none;
+  transition:     opacity .25s ease;
+}
+
+/* Cuando el JS agrega la clase "open", el modal aparece */
+.modal-backdrop.open {
+  opacity:        1;
+  pointer-events: all;
+}
+
+/* Caja del modal */
+.modal {
+  position:      relative;
+  background:    #211f1a;
+  border:        1px solid var(--color-accent-dim);
+  border-radius: 18px;
+  padding:       36px 32px 32px;
+  width:         100%;
+  max-width:     420px;   /* ancho máximo del modal */
+  box-shadow:    0 24px 60px rgba(0, 0, 0, .7);
+  /* Animación de entrada: sube desde abajo */
+  transform:  translateY(20px);
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+  display:        flex;
+  flex-direction: column;
+  gap:            18px;
+}
+
+.modal-backdrop.open .modal {
+  transform: translateY(0);
+}
+
+/* Botón X para cerrar el modal */
+.modal-close {
+  position:        absolute;
+  top:             16px;
+  right:           16px;
+  cursor:          pointer;
+  background:      none;
+  border:          none;
+  color:           var(--color-text-secondary);
+  font-size:       1.1rem;
+  width:           32px;
+  height:          32px;
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  transition:      background var(--transition), color var(--transition);
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, .08);
+  color:      var(--color-text-primary);
+}
+
+/* Títulos del modal */
+.modal-title {
+  font-family: var(--font-display);
+  font-size:   1.5rem;
+  font-weight: 700;
+  color:       var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.modal-subtitle {
+  font-size:  .88rem;
+  color:      var(--color-text-secondary);
+  margin-top: -10px;
+}
+
+/* Fila con label + botón de ayuda */
+.field-label-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+}
+
+/* Grupo de campo (label + input) */
+.field-group {
+  display:        flex;
+  flex-direction: column;
+  gap:            6px;
+}
+
+/* Etiqueta del campo */
+.field-label {
+  font-size:      .82rem;
+  font-weight:    700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color:          var(--color-text-secondary);
+}
+
+/* Campo de texto */
+.field-input {
+  background:    #2a2720;
+  border:        1.5px solid var(--color-border);
+  border-radius: 10px;
+  padding:       13px 16px;
+  font-family:   var(--font-body);
+  font-size:     .95rem;
+  color:         var(--color-text-primary);
+  outline:       none;
+  transition:    border-color var(--transition), box-shadow var(--transition);
+}
+
+.field-input::placeholder {
+  color: #5a5348;
+}
+
+/* Campo activo (al hacer clic en él) */
+.field-input:focus {
+  border-color: var(--color-accent);
+  box-shadow:   0 0 0 3px rgba(200, 148, 58, .18);
+}
+
+/* Texto de error (aparece si faltan campos) */
+.modal-error {
+  font-size:  .85rem;
+  color:      #e06060;
+  min-height: 1.2em;
+}
+
+/* Botón "Enviar pedido por WhatsApp" dentro del modal */
+.modal-send-btn {
+  cursor:          pointer;
+  margin-top:      4px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             10px;
+  background:      linear-gradient(135deg, #25d366 0%, #128c52 100%);
+  color:           #fff;
+  border:          none;
+  border-radius:   12px;
+  padding:         16px;
+  width:           100%;
+  font-family:     var(--font-body);
+  font-size:       1rem;
+  font-weight:     700;
+  letter-spacing:  .03em;
+  box-shadow:      0 4px 18px rgba(37, 211, 102, .35);
+  transition:      filter var(--transition),
+                   transform var(--transition),
+                   box-shadow var(--transition);
+}
+
+.modal-send-btn:hover {
+  filter:    brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, .5);
+}
+
+.modal-send-btn:active {
+  transform: scale(0.97);
+}
+
+/* Botón de ayuda ❕ */
+.help-btn {
+  cursor:        pointer;
+  background:    transparent;
+  border:        none;
+  font-size:     1rem;
+  padding:       2px 6px;
+  border-radius: 50%;
+  transition:    background var(--transition);
+  line-height:   1;
+}
+
+.help-btn:hover {
+  background: rgba(255, 255, 255, .08);
+}
+
+
+/* ----------------------------------------------------------------
+   10. PIE DE PÁGINA
+   ---------------------------------------------------------------- */
+.site-footer {
+  background:      var(--color-surface-alt);
+  border-top:      1px solid var(--color-border);
+  padding:         36px 20px 40px;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             14px;
+  margin-top:      20px;
+}
+
+.footer-item {
+  display:    flex;
+  align-items: center;
+  gap:        10px;
+  font-size:  .95rem;
+  color:      var(--color-text-secondary);
+  text-align: center;
+}
+
+.footer-icon {
+  font-size:   1.2rem;
+  flex-shrink: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   11. TOOLTIP DE AYUDA (botón ❕ en el campo de dirección)
+   Pequeña burbuja con consejos que aparece al presionar ❕.
+   ---------------------------------------------------------------- */
+.help-tooltip {
+  position:      fixed;
+  z-index:       300;
+  background:    #2a2720;
+  border:        1.5px solid var(--color-accent-dim);
+  border-radius: 12px;
+  padding:       14px 16px;
+  font-size:     .82rem;
+  color:         var(--color-text-secondary);
+  line-height:   1.6;
+  max-width:     280px;
+  box-shadow:    0 8px 28px rgba(0, 0, 0, .55);
+  /* Aparece con transición de opacidad */
+  opacity:       0;
+  transition:    opacity .25s ease;
+  pointer-events: none;
+}
+
+/* Clase que el JS agrega para mostrar el tooltip */
+.help-tooltip.show {
+  opacity: 1;
+}
+
+.help-tooltip strong {
+  color: var(--color-accent);
+}
+
+
+/* ----------------------------------------------------------------
+   12. ANIMACIONES
+   ---------------------------------------------------------------- */
+
+/* Aparición suave de las tarjetas al cargar o filtrar */
+@keyframes fadeUp {
+  from {
+    opacity:   0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ----------------------------------------------------------------
+   13. RESPONSIVE — ajustes para pantallas pequeñas (móvil)
+   Se aplica cuando la pantalla es menor a 600px de ancho.
+   ---------------------------------------------------------------- */
+@media (max-width: 600px) {
+
+  /* Foto de portada más pequeña en móvil */
+  .hero-image-wrapper {
+    height: 200px;
+  }
+
+  /* Botones de categoría más compactos */
+  .cat-btn {
+    padding:   8px 18px;
+    font-size: .8rem;
+  }
+
+  /* Una sola columna de productos en móvil */
+  .product-grid {
+    grid-template-columns: 1fr;
+    padding: 20px 14px;
+    gap:     18px;
+  }
+
+  /* Barra flotante en columna (apilada) en móvil */
+  .order-bar {
+    flex-direction: column;
+    gap:     12px;
+    padding: 16px 20px;
+  }
+
+  /* El botón de WhatsApp ocupa todo el ancho en móvil */
+  .whatsapp-btn {
+    width:           100%;
+    justify-content: center;
+  }
+
+  /* Modal casi de pantalla completa en móvil */
+  .modal {
+    max-width: 95vw;
+    padding:   28px 20px 24px;
+  }
+}
