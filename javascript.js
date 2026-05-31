@@ -120,13 +120,15 @@ tarjetasProducto.forEach(function(tarjeta) {
     actualizarBarraFlotante();
   });
 
-  // Botón + : suma 1
-  botonMas.addEventListener('click', function() {
-    var cantidadActual = parseInt(spanCantidad.textContent, 10);
+  // Botón + : suma 1 (máximo 50 unidades)
+botonMas.addEventListener('click', function() {
+  var cantidadActual = parseInt(spanCantidad.textContent, 10);
+  if (cantidadActual < 50) {  // ✅ LÍMITE DE 50 UNIDADES
     spanCantidad.textContent = cantidadActual + 1;
     actualizarEstadoTarjeta(tarjeta, spanCantidad);
     actualizarBarraFlotante();
-  });
+  }
+});
 });
 
 // Agrega o quita la clase "has-qty" (borde dorado) según si hay cantidad > 0
