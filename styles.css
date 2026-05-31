@@ -711,3 +711,7 @@ img {
     max-width: 95vw;
     padding:   28px 20px 24px;
    }
+
+.loading-message {
+ text-align: center;
+}
