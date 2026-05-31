@@ -16,5 +16,10 @@
     "price": 250.00,
     "category": "bebidas",
     "image": "https://www.tgraf.cu/catauro/wp-content/uploads/sites/4/2023/07/1690152317_1.jpeg"
-  }
+  },
+  {
+    "name": "Cerveza",
+    "price": 350,
+    "category": "bebidas",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmSq83KC3vT1KAL5CKUyolt9zjn5lnfrD1tRa2aHHmWw&s=10"
 ]
