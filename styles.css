@@ -693,21 +693,7 @@ img {
   line-height:   1.6;
   max-width:     280px;
   box-shadow:    0 8px 28px rgba(0, 0, 0, .55);
-  /* Aparece con transición de opacidad */
-  opacity:       0;
-  transition:    opacity .25s ease;
-  pointer-events: none;
 }
-
-/* Clase que el JS agrega para mostrar el tooltip */
-.help-tooltip.show {
-  opacity: 1;
-}
-
-.help-tooltip strong {
-  color: var(--color-accent);
-}
-
 
 /* ----------------------------------------------------------------
    12. ANIMACIONES
