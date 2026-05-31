@@ -32,9 +32,6 @@ var campTelefono    = document.getElementById('input-tel');
 var campDireccion   = document.getElementById('input-dir');
 var campTarjeta     = document.getElementById('input-tarjeta');
 
-// Botón de ayuda ❕ (tooltip de la dirección)
-var botonAyuda      = document.getElementById('help-dir-btn');
-
 
 /* ----------------------------------------------------------------
    2. ESTADO GLOBAL
@@ -281,16 +278,6 @@ function cerrarModal() {
   }
   if (mensajeError) mensajeError.textContent = '';
 }
-
-
-/* ================================================================
-   9. TOOLTIP DE AYUDA ❕
-   ================================================================ */
-
-function mostrarTooltipAyuda(evento) {
-
-   alert("ToolTip");
-  }
 
 /* ================================================================
    10. VALIDACIÓN Y ENVÍO POR WHATSAPP (con el formato que pediste)
