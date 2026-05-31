@@ -79,96 +79,11 @@
          2. Pégalo debajo del último artículo de su categoría
          3. Cambia: data-category, data-name, data-price, src de la img, alt, h2 y p del precio
   ============================================================ -->
+  
   <main id="product-grid" class="product-grid" role="tabpanel">
-
-
-    <!-- ─────────────────────────────────────────────────────────
-         CATEGORÍA: DULCES
-    ──────────────────────────────────────────────────────────── -->
-
-    <article class="product-card"
-             data-category="dulces"
-             data-name="Maní Molido"
-             data-price="120.00">
-      <!-- CAMBIAR: ruta de la imagen del producto -->
-      <img src="img/maniC.jpg" alt="Maní Molido" class="product-img" />
-      <div class="product-info">
-        <!-- CAMBIAR: nombre visible del producto -->
-        <h2 class="product-name">Maní Molido</h2>
-        <!-- CAMBIAR: precio visible (con símbolo $) -->
-        <p class="product-price">$120.00</p>
-        <!-- Control de cantidad — no necesitas modificar esto -->
-        <div class="qty-control">
-          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
-          <span class="qty-value">0</span>
-          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
-        </div>
-      </div>
-    </article>
-
-    <article class="product-card"
-             data-category="dulces"
-             data-name="Cremita de Leche"
-             data-price="60.00">
-      <img src="img/cremitaLeche.webp" alt="Cremita de leche" class="product-img" />
-      <div class="product-info">
-        <h2 class="product-name">Cremita de Leche</h2>
-        <p class="product-price">$60.00</p>
-        <div class="qty-control">
-          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
-          <span class="qty-value">0</span>
-          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
-        </div>
-      </div>
-    </article>
-
-
-    <!-- ─────────────────────────────────────────────────────────
-         CATEGORÍA: BEBIDAS
-    ──────────────────────────────────────────────────────────── -->
-
-    <article class="product-card"
-             data-category="bebidas"
-             data-name="Refresco de Lata Naranja"
-             data-price="250.00">
-      <img src="https://www.tgraf.cu/catauro/wp-content/uploads/sites/4/2023/07/1690152317_1.jpeg" alt="Refresco de Lata Naranja" class="product-img" />
-      <div class="product-info">
-        <h2 class="product-name">Refresco de Lata Naranja</h2>
-        <p class="product-price">$250.00</p>
-        <div class="qty-control">
-          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
-          <span class="qty-value">0</span>
-          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
-        </div>
-      </div>
-    </article>
-
-
-    <!-- ─────────────────────────────────────────────────────────
-         CATEGORÍA: OTROS
-         (ejemplo comentado — descomenta para activar)
-    ──────────────────────────────────────────────────────────── -->
-
-    <!--
-    <article class="product-card"
-             data-category="otros"
-             data-name="Producto de Ejemplo"
-             data-price="100.00">
-      <img src="img/ejemplo.jpg" alt="Ejemplo de producto" class="product-img" />
-      <div class="product-info">
-        <h2 class="product-name">Producto de Ejemplo</h2>
-        <p class="product-price">$100.00</p>
-        <div class="qty-control">
-          <button class="qty-btn qty-minus" aria-label="Restar">−</button>
-          <span class="qty-value">0</span>
-          <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
-        </div>
-      </div>
-    </article>
-    -->
-
+  <!-- Los productos se cargarán automáticamente desde productos.json -->
+  <div class="loading-message">Cargando productos...</div>
   </main>
-
 
   <!-- ============================================================
        SECCIÓN 4: BARRA FLOTANTE DE PEDIDO
