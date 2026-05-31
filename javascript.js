@@ -1,6 +1,6 @@
 /* ================================================================
    javascript.js — Funcionalidad de Dairy & Marco
-   VERSIÓN CON CARGA DE PRODUCTOS DESDE JSON
+   VERSIÓN CON CATEGORÍA "TODO" QUE MUESTRA TODOS LOS PRODUCTOS
    ================================================================ */
 
 
@@ -8,7 +8,7 @@
    1. SELECCIÓN DE ELEMENTOS DEL HTML
    ---------------------------------------------------------------- */
 
-// Botones de categoría (Dulces, Bebidas, Otros)
+// Botones de categoría (Todo, Dulces, Bebidas, Otros)
 var botonesCategoria = document.querySelectorAll('.cat-btn');
 
 // Contenedor donde van los productos
@@ -40,10 +40,10 @@ var botonAyuda      = document.getElementById('help-dir-btn');
    2. ESTADO GLOBAL
    ---------------------------------------------------------------- */
 
-var categoriaActual = 'dulces';
+var categoriaActual = 'todo';
 var tooltipActual = null;
 var MAX_UNIDADES = 50;
-var todosLosProductos = [];  // Aquí se guardan los productos cargados del JSON
+var todosLosProductos = [];
 
 
 /* ================================================================
@@ -119,7 +119,7 @@ function escapeHTML(texto) {
 
 
 /* ================================================================
-   5. INICIALIZAR CONTADORES (+/-)
+   5. INICIALIZAR CONTADORES (+/-) CON LÍMITE DE 50
    ================================================================ */
 
 function inicializarContadores() {
@@ -130,7 +130,7 @@ function inicializarContadores() {
     var botonMas = tarjeta.querySelector('.qty-plus');
     var spanCantidad = tarjeta.querySelector('.qty-value');
     
-    // Botón −
+    // Botón − (restar)
     botonMenos.addEventListener('click', function() {
       var cantidadActual = parseInt(spanCantidad.textContent, 10);
       if (cantidadActual > 0) {
@@ -140,7 +140,7 @@ function inicializarContadores() {
       actualizarBarraFlotante();
     });
     
-    // Botón + (con límite de 50)
+    // Botón + (sumar con límite de 50)
     botonMas.addEventListener('click', function() {
       var cantidadActual = parseInt(spanCantidad.textContent, 10);
       if (cantidadActual < MAX_UNIDADES) {
@@ -161,13 +161,12 @@ function actualizarEstadoTarjeta(tarjeta, spanCantidad) {
 
 
 /* ================================================================
-   6. FILTRO DE CATEGORÍAS (con soporte para "todo")
+   6. FILTRO DE CATEGORÍAS (CON "TODO" QUE MUESTRA TODOS)
    ================================================================ */
 
 function inicializarFiltros() {
   var todasLasTarjetas = document.querySelectorAll('.product-card');
   
-  // Escuchar clics en los botones de categoría
   botonesCategoria.forEach(function(btn) {
     // Remover eventos anteriores para evitar duplicados
     btn.removeEventListener('click', btn.clickHandler);
@@ -186,10 +185,10 @@ function inicializarFiltros() {
       // Filtrar tarjetas
       todasLasTarjetas.forEach(function(tarjeta) {
         if (target === 'todo') {
-          // Si la categoría es "todo", mostrar TODOS los productos
+          // "Todo" muestra TODOS los productos
           tarjeta.classList.remove('hidden');
         } else {
-          // Si no, mostrar solo los que coinciden
+          // Las demás categorías filtran normalmente
           var esDeCategoria = tarjeta.getAttribute('data-category') === target;
           tarjeta.classList.toggle('hidden', !esDeCategoria);
         }
@@ -236,30 +235,52 @@ function actualizarBarraFlotante() {
    8. MODAL — ABRIR Y CERRAR
    ================================================================ */
 
-botonWhatsApp.addEventListener('click', function() {
-  fondoModal.classList.add('open');
-  fondoModal.setAttribute('aria-hidden', 'false');
-  mensajeError.textContent = '';
-  campNombre.focus();
-});
+if (botonWhatsApp) {
+  botonWhatsApp.addEventListener('click', function() {
+    // Verificar que haya productos seleccionados
+    var totalArticulos = 0;
+    var todasLasTarjetas = document.querySelectorAll('.product-card');
+    todasLasTarjetas.forEach(function(tarjeta) {
+      var cantidad = parseInt(tarjeta.querySelector('.qty-value').textContent, 10);
+      totalArticulos += cantidad;
+    });
+    
+    if (totalArticulos === 0) {
+      alert('⚠️ Selecciona al menos un producto antes de pedir.');
+      return;
+    }
+    
+    fondoModal.classList.add('open');
+    fondoModal.setAttribute('aria-hidden', 'false');
+    mensajeError.textContent = '';
+    if (campNombre) campNombre.focus();
+  });
+}
 
-botonCerrar.addEventListener('click', cerrarModal);
+if (botonCerrar) {
+  botonCerrar.addEventListener('click', cerrarModal);
+}
 
-fondoModal.addEventListener('click', function(evento) {
-  if (evento.target === fondoModal) {
-    cerrarModal();
-  }
-});
+if (fondoModal) {
+  fondoModal.addEventListener('click', function(evento) {
+    if (evento.target === fondoModal) {
+      cerrarModal();
+    }
+  });
+}
 
 document.addEventListener('keydown', function(evento) {
-  if (evento.key === 'Escape' && fondoModal.classList.contains('open')) {
+  if (evento.key === 'Escape' && fondoModal && fondoModal.classList.contains('open')) {
     cerrarModal();
   }
 });
 
 function cerrarModal() {
-  fondoModal.classList.remove('open');
-  fondoModal.setAttribute('aria-hidden', 'true');
+  if (fondoModal) {
+    fondoModal.classList.remove('open');
+    fondoModal.setAttribute('aria-hidden', 'true');
+  }
+  if (mensajeError) mensajeError.textContent = '';
 }
 
 
@@ -319,52 +340,54 @@ document.addEventListener('click', function(evento) {
 
 
 /* ================================================================
-   10. VALIDACIÓN Y ENVÍO POR WHATSAPP
+   10. VALIDACIÓN Y ENVÍO POR WHATSAPP (con el formato que pediste)
    ================================================================ */
 
-botonEnviar.addEventListener('click', function() {
-  var nombre = campNombre.value.trim();
-  var telefono = campTelefono.value.trim();
-  var direccion = campDireccion.value.trim();
-  var tarjeta = campTarjeta.value.trim();
-  
-  if (!nombre || !telefono || !direccion || !tarjeta) {
-    mensajeError.textContent = '⚠️ Por favor, completa todos los campos.';
-    return;
-  }
-  
-  mensajeError.textContent = '';
-  
-  var lineasProductos = [];
-  var totalPrecio = 0;
-  var todasLasTarjetas = document.querySelectorAll('.product-card');
-  
-  todasLasTarjetas.forEach(function(tarjeta) {
-    var cantidad = parseInt(tarjeta.querySelector('.qty-value').textContent, 10);
-    if (cantidad > 0) {
-      var nombreProducto = tarjeta.getAttribute('data-name');
-      var precio = parseFloat(tarjeta.getAttribute('data-price'));
-      var subtotal = cantidad * precio;
-      totalPrecio += subtotal;
-      lineasProductos.push('• ' + cantidad + 'x ' + nombreProducto + ' — $' + subtotal.toFixed(2));
+if (botonEnviar) {
+  botonEnviar.addEventListener('click', function() {
+    var nombre = campNombre ? campNombre.value.trim() : '';
+    var telefono = campTelefono ? campTelefono.value.trim() : '';
+    var direccion = campDireccion ? campDireccion.value.trim() : '';
+    var tarjeta = campTarjeta ? campTarjeta.value.trim() : '';
+    
+    if (!nombre || !telefono || !direccion || !tarjeta) {
+      if (mensajeError) mensajeError.textContent = '⚠️ Por favor, completa todos los campos.';
+      return;
     }
+    
+    if (mensajeError) mensajeError.textContent = '';
+    
+    var lineasProductos = [];
+    var totalPrecio = 0;
+    var todasLasTarjetas = document.querySelectorAll('.product-card');
+    
+    todasLasTarjetas.forEach(function(tarjeta) {
+      var cantidad = parseInt(tarjeta.querySelector('.qty-value').textContent, 10);
+      if (cantidad > 0) {
+        var nombreProducto = tarjeta.getAttribute('data-name');
+        var precio = parseFloat(tarjeta.getAttribute('data-price'));
+        totalPrecio += cantidad * precio;
+        lineasProductos.push(cantidad + 'x ' + nombreProducto);
+      }
+    });
+    
+    // Formato del mensaje como pediste
+    var mensaje = '*NUEVO PEDIDO — Dairy & Marco*\n\n' +
+      '- Nombre: ' + nombre + '\n' +
+      '- Teléfono: ' + telefono + '\n' +
+      '- Dirección: ' + direccion + '\n' +
+      '- Últimos 4 de tarjeta: ' + tarjeta + '\n\n' +
+      '> Productos:\n' +
+      '> • ' + lineasProductos.join('\n> • ') + '\n\n' +
+      '*Total: $' + totalPrecio.toFixed(2) + '*';
+    
+    var numeroWhatsApp = botonWhatsApp ? botonWhatsApp.dataset.phone : '5359638868';
+    var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
+    
+    window.open(urlWhatsApp, '_blank');
+    cerrarModal();
   });
-  
-  var mensaje = '*NUEVO PEDIDO — Dairy & Marco*\n\n' +
-  '- Nombre: ' + nombre + '\n' +
-  '- Teléfono: ' + telefono + '\n' +
-  '- Dirección: ' + direccion + '\n' +
-  '- Últimos 4 de tarjeta: ' + tarjeta + '\n\n' +
-  '> Productos:\n' +
-  '> ' + lineasProductos.join('\n> ') + '\n\n' +
-  '*Total: $' + totalPrecio.toFixed(2) + '*';
-  
-  var numeroWhatsApp = botonWhatsApp.dataset.phone;
-  var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
-  
-  window.open(urlWhatsApp, '_blank');
-  cerrarModal();
-});
+}
 
 
 /* ================================================================
