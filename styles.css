@@ -188,12 +188,6 @@ img {
   -webkit-overflow-scrolling: touch;
 }
 
-.loading-message {
-   color: var(--color-text-price);
-   font-family: var(--font-display);
-   text-align: center;
-}
-
 /* Botón de categoría (estado normal) */
 .cat-btn {
   cursor:         pointer;
