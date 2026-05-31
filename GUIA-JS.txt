@@ -1,0 +1,162 @@
+================================================================
+GUÍA PARA EDITAR javascript.js
+Dairy & Marco — Página de pedidos
+================================================================
+
+Este archivo controla TODO el comportamiento interactivo:
+filtrar categorías, sumar/restar productos, calcular el total,
+abrir el modal y armar el mensaje de WhatsApp.
+
+No necesitas entender todo el código. Esta guía te muestra
+exactamente qué tocar y qué NO tocar.
+
+----------------------------------------------------------------
+CÓMO ESTÁ ORGANIZADO EL JS
+----------------------------------------------------------------
+
+  1. Selección de elementos  → referencias a los elementos del HTML
+  2. Estado global           → variables que guardan datos actuales
+  3. Filtro de categorías    → lógica de los botones Dulces/Bebidas/Otros
+  4. Contador (+/-)          → lógica de sumar/restar cantidad
+  5. Barra flotante          → cálculo del total y visibilidad
+  6. Modal (abrir/cerrar)    → apertura y cierre del formulario
+  7. Tooltip de ayuda        → la burbuja del botón ❕
+  8. Validación y envío      → verificar campos y armar el WhatsApp
+  9. Inicialización          → categoría que se muestra al cargar
+
+
+----------------------------------------------------------------
+CAMBIOS QUE PUEDES HACER SIN RIESGO
+----------------------------------------------------------------
+
+★ CAMBIAR LA CATEGORÍA QUE SE MUESTRA AL CARGAR LA PÁGINA
+  Al final del archivo busca:
+    activarCategoria('dulces');
+  Cámbiala por cualquier categoría que tengas.
+  Ejemplo: activarCategoria('bebidas');
+  IMPORTANTE: el nombre debe coincidir exactamente con un
+  data-target de los botones en el HTML.
+
+★ CAMBIAR EL TEXTO DEL TOOLTIP DE AYUDA ❕
+  Busca el bloque donde dice:
+    tooltipActual.innerHTML = '📌 <strong>Consejos...'
+  Modifica el texto que aparece entre las comillas.
+  Puedes cambiar los emojis, agregar o quitar líneas.
+  El <br> es un salto de línea. El <strong> hace el texto en negrita.
+
+★ CAMBIAR EL FORMATO DEL MENSAJE DE WHATSAPP
+  Busca el bloque que dice "ARMADO DEL MENSAJE".
+  Ahí está la variable "mensaje" que construye el texto.
+  Puedes cambiar los emojis, los textos fijos, o el orden.
+  
+  Importante: el \n es un salto de línea dentro del mensaje.
+  El * alrededor de un texto lo pone en negrita en WhatsApp.
+  Ejemplo: '*Total:*' se ve como "Total:" en negrita en WhatsApp.
+
+★ CAMBIAR EL NOMBRE DEL NEGOCIO EN EL MENSAJE DE WHATSAPP
+  Busca: '🛒 *NUEVO PEDIDO — Dairy & Marco*\n\n'
+  Reemplaza "Dairy & Marco" por el nombre de tu negocio.
+
+★ CAMBIAR LA CANTIDAD DE TIEMPO QUE DURA EL TOOLTIP
+  Busca: }, 5000);   (dentro de la función mostrarTooltipAyuda)
+  El 5000 son 5 segundos (en milisegundos: 1000 = 1 segundo).
+  Cámbialo por el tiempo que quieras. Ej: 3000 = 3 segundos.
+
+
+----------------------------------------------------------------
+CÓMO HACER UN CAMPO DEL FORMULARIO OBLIGATORIO O OPCIONAL
+----------------------------------------------------------------
+
+Los campos que se verifican antes de enviar están en esta sección:
+  (busca el comentario: "VALIDACIÓN DE CAMPOS OBLIGATORIOS")
+
+La validación actual es:
+  if (!nombre || !telefono || !direccion || !tarjeta) { ... }
+
+Esto significa: "si falta nombre O teléfono O dirección O tarjeta,
+muestra el error y no envíes."
+
+★ PARA HACER UN CAMPO OPCIONAL (que no sea obligatorio):
+  Elimínalo de la condición.
+  Ejemplo — hacer la tarjeta opcional:
+    Antes:  if (!nombre || !telefono || !direccion || !tarjeta)
+    Después: if (!nombre || !telefono || !direccion)
+
+★ PARA AGREGAR UN CAMPO NUEVO COMO OBLIGATORIO:
+  1. Primero agrégalo en el HTML (ver GUIA-HTML.txt)
+  2. En el JS, busca donde están las otras variables de campo:
+       var campNombre   = document.getElementById('input-nombre');
+  3. Agrega una línea similar para tu campo nuevo:
+       var campNotas    = document.getElementById('input-notas');
+  4. En el bloque de lectura de valores (busca "Leer valores"):
+       var notas = campNotas.value.trim();
+  5. Agrégalo a la validación:
+       if (!nombre || !telefono || !direccion || !tarjeta || !notas)
+  6. Agrégalo al mensaje de WhatsApp:
+       '📝 *Notas:* ' + notas + '\n' +
+
+
+----------------------------------------------------------------
+CÓMO CAMBIAR EL TEXTO DEL ERROR DE VALIDACIÓN
+----------------------------------------------------------------
+
+Busca: mensajeError.textContent = '⚠️ Por favor, completa todos los campos.';
+Reemplaza el texto entre las comillas por el mensaje que quieras.
+
+
+----------------------------------------------------------------
+PARTES DEL CÓDIGO QUE NO DEBES CAMBIAR
+----------------------------------------------------------------
+
+Estas secciones controlan funcionalidades internas. Cambiarlas
+puede romper la página si no tienes experiencia en JS.
+
+  ✗ La función activarCategoria() — lógica del filtro
+  ✗ El forEach que agrega eventos a los botones +/-
+  ✗ La función actualizarBarraFlotante() — cálculo del total
+  ✗ Los event listeners del modal (click en fondo, tecla Escape)
+  ✗ La URL de WhatsApp (encodeURIComponent y wa.me)
+
+
+----------------------------------------------------------------
+GLOSARIO BÁSICO DE JAVASCRIPT
+----------------------------------------------------------------
+
+var nombre = valor;
+  → Crea una variable llamada "nombre" con el valor indicado.
+
+document.getElementById('algun-id')
+  → Busca en el HTML el elemento que tiene id="algun-id".
+
+document.querySelectorAll('.alguna-clase')
+  → Busca TODOS los elementos con esa clase CSS.
+
+elemento.addEventListener('click', funcion)
+  → Ejecuta "funcion" cada vez que se hace clic en "elemento".
+
+elemento.classList.add('clase')    → agrega una clase CSS
+elemento.classList.remove('clase') → quita una clase CSS
+elemento.classList.toggle('clase') → agrega si no la tiene, quita si la tiene
+
+parseInt(texto, 10)
+  → Convierte un texto como "3" al número 3.
+    El 10 indica que es base decimal (siempre ponlo).
+
+parseFloat(texto)
+  → Convierte "120.50" al número 120.50 (con decimales).
+
+.toFixed(2)
+  → Muestra un número con exactamente 2 decimales.
+    Ej: (3.5).toFixed(2) → "3.50"
+
+encodeURIComponent(texto)
+  → Convierte caracteres especiales para que funcionen en una URL.
+    Los acentos, espacios y símbolos necesitan esto para WhatsApp.
+
+\n dentro de una cadena de texto
+  → Salto de línea.
+
+// texto aquí
+  → Comentario: el navegador ignora esta línea. Solo es para leer.
+
+================================================================

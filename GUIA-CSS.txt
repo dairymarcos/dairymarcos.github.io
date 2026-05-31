@@ -1,0 +1,157 @@
+================================================================
+GUÍA PARA EDITAR styles.css
+Dairy & Marco — Página de pedidos
+================================================================
+
+Este archivo controla TODO lo visual: colores, tamaños,
+fuentes, animaciones, espaciados y cómo se ve en móvil.
+No necesitas tocar el HTML o el JS para cambiar la apariencia.
+
+----------------------------------------------------------------
+CÓMO ESTÁ ORGANIZADO EL CSS
+----------------------------------------------------------------
+
+  1.  Variables globales  → colores y fuentes centralizados
+  2.  Reset y base        → configuración base del navegador
+  3.  Cabecera            → foto de portada y nombre del negocio
+  4.  Categorías          → botones de filtro (Dulces, Bebidas...)
+  5.  Cuadrícula          → el grid de tarjetas de producto
+  6.  Tarjeta             → estilo de cada tarjeta individual
+  7.  Contador (+/-)      → los botones de cantidad
+  8.  Barra flotante      → la barra que aparece abajo con el total
+  9.  Modal               → el formulario de datos del cliente
+  10. Pie de página       → dirección y teléfono
+  11. Tooltip             → la burbuja de ayuda del botón ❕
+  12. Animaciones         → el efecto fadeUp de las tarjetas
+  13. Responsive          → ajustes para pantallas de móvil
+
+
+----------------------------------------------------------------
+EL TRUCO MÁS IMPORTANTE: LAS VARIABLES (:root)
+----------------------------------------------------------------
+
+Al principio del archivo hay una sección llamada :root { }
+Ahí están definidas TODAS las variables de color y fuente.
+Si cambias un valor aquí, cambia en toda la página automáticamente.
+
+EJEMPLO — cambiar el color dorado por azul:
+  Antes:  --color-accent: #c8943a;
+  Después: --color-accent: #3a7ac8;
+
+VARIABLES MÁS IMPORTANTES:
+
+  --color-bg            → fondo oscuro de toda la página
+  --color-surface       → fondo de las tarjetas de producto
+  --color-accent        → color dorado principal (botones, bordes activos)
+  --color-accent-dim    → versión más oscura del dorado (hovers, bordes)
+  --color-text-primary  → color del texto principal (claro)
+  --color-text-price    → color del precio en las tarjetas
+  --font-display        → fuente elegante para títulos (Playfair Display)
+  --font-body           → fuente para texto normal (Lato)
+  --transition          → velocidad de las animaciones (ej: 0.25s ease)
+
+
+----------------------------------------------------------------
+CAMBIOS VISUALES COMUNES
+----------------------------------------------------------------
+
+★ CAMBIAR LA ALTURA DE LA FOTO DE PORTADA
+  Busca: height: 320px; (dentro de .hero-image-wrapper)
+  Cámbiala al valor que prefieras. Ej: height: 400px;
+  En móvil está separada (busca la sección @media (max-width: 600px))
+
+★ CAMBIAR LA ALTURA DE LAS FOTOS DE PRODUCTO
+  Busca: height: 300px; (dentro de .product-img)
+  Cámbiala al valor que quieras. Ej: height: 200px;
+
+★ CAMBIAR EL TAMAÑO DE LOS BOTONES +/-
+  Busca dentro de .qty-btn:
+    width:  48px;
+    height: 48px;
+  Aumenta ambos valores para hacerlos más grandes.
+  También cambia line-height en .qty-value al mismo valor.
+
+★ CAMBIAR EL NÚMERO DE COLUMNAS DE PRODUCTOS
+  Busca: grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  El valor "260px" es el ancho mínimo de cada columna.
+  - Número más pequeño = más columnas (tarjetas más angostas)
+  - Número más grande  = menos columnas (tarjetas más anchas)
+  Ejemplos:
+    minmax(200px, 1fr) → caben más tarjetas por fila
+    minmax(320px, 1fr) → tarjetas más grandes, menos por fila
+
+★ CAMBIAR EL COLOR DE FONDO GENERAL
+  Busca: --color-bg: #0f0e0c;
+  Reemplaza el color hexadecimal.
+  Algunos ejemplos:
+    #ffffff → blanco
+    #1a1a2e → azul muy oscuro
+    #0f2010 → verde muy oscuro
+
+★ CAMBIAR LA VELOCIDAD DE LAS ANIMACIONES
+  Busca: --transition: 0.25s ease;
+  - Número más alto → animaciones más lentas (ej: 0.5s ease)
+  - Número más bajo → animaciones más rápidas (ej: 0.1s ease)
+
+★ CAMBIAR LAS FUENTES
+  1. Ve a https://fonts.google.com y elige tus fuentes
+  2. Copia el enlace <link> y reemplaza el que está en el <head> del HTML
+  3. En el CSS, cambia:
+       --font-display: 'NombreFuente', serif;
+       --font-body:    'OtraFuente', sans-serif;
+
+
+----------------------------------------------------------------
+CÓMO FUNCIONA EL RESPONSIVE (MÓVIL)
+----------------------------------------------------------------
+
+Al final del archivo hay una sección que empieza con:
+  @media (max-width: 600px) { ... }
+
+Todo lo que está dentro de esas llaves SOLO se aplica cuando
+la pantalla es más angosta que 600px (teléfonos móviles).
+
+Si quieres ajustar algo solo en móvil, ponlo aquí.
+Si quieres cambiar el punto de quiebre:
+  Cambia "600px" por el valor que necesites. Ej: 768px para tablets.
+
+Cambios que ya existen en el responsive:
+  - La foto de portada se hace más pequeña (200px en lugar de 320px)
+  - Los productos se muestran en una sola columna
+  - La barra flotante se apila en columna (total arriba, botón abajo)
+  - El modal ocupa casi toda la pantalla
+
+
+----------------------------------------------------------------
+CLASES CSS IMPORTANTES (para entender el JS)
+----------------------------------------------------------------
+
+  .hidden     → oculta una tarjeta (la agrega el JS al filtrar)
+  .active     → botón de categoría seleccionado
+  .has-qty    → tarjeta con cantidad > 0 (borde dorado)
+  .visible    → barra flotante visible (la agrega el JS)
+  .open       → modal abierto (la agrega el JS)
+  .show       → tooltip visible (la agrega el JS)
+
+Estas clases no necesitas escribirlas tú; el JS las agrega y quita.
+Pero si cambias el nombre de una clase aquí, cámbiala también en el JS.
+
+
+----------------------------------------------------------------
+CONSEJOS GENERALES DE CSS
+----------------------------------------------------------------
+
+• Cada número de color empieza con # y tiene 6 dígitos (hexadecimal).
+  Puedes usar cualquier selector de color online para obtener códigos.
+
+• "px" son píxeles: unidad fija. "rem" es relativa al tamaño base del texto.
+  1rem ≈ 16px si no cambias nada.
+
+• "em" en letter-spacing y otros contextos es relativo al tamaño de la fuente
+  del elemento actual.
+
+• Si algo no se ve bien, abre las DevTools del navegador (F12),
+  haz clic en el elemento y ve qué estilos tiene. Puedes probar
+  cambios en tiempo real desde ahí sin tocar el archivo.
+
+================================================================

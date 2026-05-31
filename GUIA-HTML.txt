@@ -1,0 +1,171 @@
+================================================================
+GUÍA PARA EDITAR index.html
+Dairy & Marco — Página de pedidos
+================================================================
+
+Este archivo contiene la ESTRUCTURA de la página: secciones,
+textos, imágenes y botones. No controla los colores ni el
+comportamiento — eso es trabajo del CSS y el JS.
+
+----------------------------------------------------------------
+CÓMO ESTÁ ORGANIZADO EL HTML
+----------------------------------------------------------------
+
+El archivo se divide en 6 secciones principales:
+
+  1. <head>         → Configuración invisible (título, fuentes, CSS)
+  2. <header>       → Foto de portada + nombre del negocio
+  3. <nav>          → Botones de categoría (Dulces, Bebidas, Otros)
+  4. <main>         → Cuadrícula de tarjetas de producto
+  5. <div order-bar>→ Barra flotante de pedido
+  6. <div modal>    → Formulario de datos del cliente
+  7. <footer>       → Dirección y teléfono del negocio
+
+
+----------------------------------------------------------------
+CAMBIOS MÁS COMUNES
+----------------------------------------------------------------
+
+★ CAMBIAR EL NOMBRE DEL NEGOCIO
+  Busca: <span class="name-main">Dairy &amp; Marco</span>
+  Reemplaza el texto por el nombre de tu negocio.
+  El símbolo &amp; es la forma correcta de escribir "&" en HTML.
+
+★ CAMBIAR EL SUBTÍTULO (debajo del nombre)
+  Busca: <span class="name-sub"></span>
+  Escribe el subtítulo entre las etiquetas.
+  Ejemplo: <span class="name-sub">Dulces artesanales</span>
+  Si no quieres subtítulo, déjalo vacío como está.
+
+★ CAMBIAR LA FOTO DE PORTADA
+  Busca: <img src="img/portada.jpeg" alt="Foto del negocio" ...>
+  Reemplaza "img/portada.jpeg" con la ruta de tu foto.
+  Ejemplo: src="fotos/mi-negocio.jpg"
+  La foto debe estar en la misma carpeta del proyecto (o en img/).
+
+★ CAMBIAR EL NÚMERO DE WHATSAPP
+  Busca: data-phone="5359638868"
+  Reemplaza el número con el tuyo.
+  Formato: código de país + número sin espacios ni guiones.
+  Ejemplo Cuba:    "5312345678"
+  Ejemplo México:  "5215512345678"
+  Ejemplo España:  "34612345678"
+
+★ CAMBIAR DIRECCIÓN Y TELÉFONO EN EL PIE DE PÁGINA
+  Busca el bloque <footer class="site-footer">
+  Cambia los textos dentro de <span> por tus datos reales.
+
+
+----------------------------------------------------------------
+CÓMO AGREGAR UN PRODUCTO NUEVO
+----------------------------------------------------------------
+
+1. Ve a la sección <main id="product-grid">
+2. Copia un bloque <article> completo (desde <article hasta </article>)
+3. Pégalo debajo del último producto de su categoría
+4. Cambia estos 5 valores:
+
+   data-category="dulces"    → categoría del producto
+                               (debe coincidir con un botón: dulces, bebidas, otros)
+
+   data-name="Maní Molido"   → nombre que aparecerá en el mensaje de WhatsApp
+
+   data-price="120.00"       → precio numérico SIN símbolo $ y SIN texto
+                               (correcto: 120.00 — incorrecto: $120.00 o "120 pesos")
+
+   src="img/maniC.jpg"       → ruta de la imagen del producto
+   alt="Maní Molido"         → descripción de la imagen (para accesibilidad)
+
+   <h2>Maní Molido</h2>      → nombre visible en la tarjeta
+   <p>$120.00</p>            → precio visible (aquí sí pones el $)
+
+EJEMPLO de producto nuevo completo:
+
+  <article class="product-card"
+           data-category="bebidas"
+           data-name="Jugo de Mango"
+           data-price="80.00">
+    <img src="img/mango.jpg" alt="Jugo de Mango" class="product-img" />
+    <div class="product-info">
+      <h2 class="product-name">Jugo de Mango</h2>
+      <p class="product-price">$80.00</p>
+      <div class="qty-control">
+        <button class="qty-btn qty-minus" aria-label="Restar">−</button>
+        <span class="qty-value">0</span>
+        <button class="qty-btn qty-plus" aria-label="Sumar">+</button>
+      </div>
+    </div>
+  </article>
+
+
+----------------------------------------------------------------
+CÓMO AGREGAR UNA CATEGORÍA NUEVA
+----------------------------------------------------------------
+
+1. En el <nav>, agrega un botón nuevo:
+   <button class="cat-btn" data-target="postres" role="tab"
+           aria-selected="false" aria-controls="product-grid">Postres</button>
+
+2. En el <main>, crea productos con esa categoría:
+   data-category="postres"
+
+El nombre en data-target y data-category DEBE ser igual (en minúsculas).
+
+
+----------------------------------------------------------------
+CÓMO AGREGAR UN CAMPO NUEVO AL FORMULARIO
+----------------------------------------------------------------
+
+1. Ve a la sección del modal (busca: <div class="modal-backdrop">)
+2. Copia este bloque y pégalo antes de <p class="modal-error">:
+
+   <div class="field-group">
+     <label class="field-label" for="input-notas">📝 Notas adicionales</label>
+     <input class="field-input" id="input-notas" type="text"
+            placeholder="Ej. Sin azúcar, por favor" />
+   </div>
+
+3. Si el campo es OBLIGATORIO, agrégalo también en javascript.js
+   (lee la guía del JS para saber cómo).
+
+
+----------------------------------------------------------------
+CÓMO QUITAR UN PRODUCTO TEMPORALMENTE SIN BORRARLO
+----------------------------------------------------------------
+
+Rodea el bloque <article> con <!-- y --> para comentarlo:
+
+  <!--
+  <article class="product-card" ...>
+    ...
+  </article>
+  -->
+
+Para volver a activarlo, borra los <!-- y -->.
+
+
+----------------------------------------------------------------
+ESTRUCTURA DE CARPETAS RECOMENDADA
+----------------------------------------------------------------
+
+tu-repositorio/
+  index.html        ← este archivo
+  styles.css        ← estilos
+  javascript.js     ← funcionalidad
+  img/
+    portada.jpeg    ← foto de portada
+    maniC.jpg       ← fotos de los productos
+    cremitaLeche.webp
+    ...
+
+
+----------------------------------------------------------------
+CÓMO SUBIR A GITHUB PAGES
+----------------------------------------------------------------
+
+1. Crea un repositorio llamado: tu-usuario.github.io
+2. Sube todos los archivos (index.html, styles.css, javascript.js, carpeta img/)
+3. Ve a Settings → Pages → Branch: main → Save
+4. Tu página estará en: https://tu-usuario.github.io
+
+================================================================
