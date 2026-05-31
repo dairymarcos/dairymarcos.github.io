@@ -289,11 +289,13 @@ function cerrarModal() {
    ================================================================ */
 
 function mostrarTooltipAyuda(evento) {
+  // Si ya hay un tooltip visible, eliminarlo primero
   if (tooltipActual) {
     tooltipActual.remove();
     tooltipActual = null;
   }
   
+  // Crear el elemento del tooltip
   tooltipActual = document.createElement('div');
   tooltipActual.className = 'help-tooltip';
   tooltipActual.innerHTML = '📌 <strong>Consejos para tu dirección:</strong><br><br>' +
@@ -304,40 +306,34 @@ function mostrarTooltipAyuda(evento) {
   
   document.body.appendChild(tooltipActual);
   
+  // Obtener dimensiones
+  var anchoVentana = window.innerWidth;
+  var anchoTooltip = tooltipActual.offsetWidth;
   var posicionBoton = botonAyuda.getBoundingClientRect();
-  tooltipActual.style.top = (posicionBoton.bottom + 8) + 'px';
-  tooltipActual.style.left = (posicionBoton.left - 20) + 'px';
   
+  // Calcular posición centrada horizontalmente
+  var izquierda = (anchoVentana / 2) - (anchoTooltip / 2);
+  
+  // Asegurar que no se salga de los bordes
+  if (izquierda < 10) izquierda = 10;
+  if (izquierda + anchoTooltip > anchoVentana - 10) {
+    izquierda = anchoVentana - anchoTooltip - 10;
+  }
+  
+  // Posicionar el tooltip debajo del botón ❕
+  tooltipActual.style.top = (posicionBoton.bottom + 8) + 'px';
+  tooltipActual.style.left = izquierda + 'px';
+  
+  // Mostrar con animación
   setTimeout(function() {
     if (tooltipActual) tooltipActual.classList.add('show');
   }, 10);
   
+  // Ocultar automáticamente después de 5 segundos
   setTimeout(function() {
     ocultarTooltip();
   }, 5000);
 }
-
-function ocultarTooltip() {
-  if (!tooltipActual) return;
-  tooltipActual.classList.remove('show');
-  setTimeout(function() {
-    if (tooltipActual) {
-      tooltipActual.remove();
-      tooltipActual = null;
-    }
-  }, 250);
-}
-
-if (botonAyuda) {
-  botonAyuda.addEventListener('click', mostrarTooltipAyuda);
-}
-
-document.addEventListener('click', function(evento) {
-  if (tooltipActual && evento.target !== botonAyuda) {
-    ocultarTooltip();
-  }
-});
-
 
 /* ================================================================
    10. VALIDACIÓN Y ENVÍO POR WHATSAPP (con el formato que pediste)
