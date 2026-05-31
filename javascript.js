@@ -41,8 +41,7 @@ var botonAyuda      = document.getElementById('help-dir-btn');
    ---------------------------------------------------------------- */
 
 var categoriaActual = 'todo';
-var tooltipActual = null;
-var MAX_UNIDADES = 50;
+var MAX_UNIDADES = 25;
 var todosLosProductos = [];
 
 
@@ -289,51 +288,9 @@ function cerrarModal() {
    ================================================================ */
 
 function mostrarTooltipAyuda(evento) {
-  // Si ya hay un tooltip visible, eliminarlo primero
-  if (tooltipActual) {
-    tooltipActual.remove();
-    tooltipActual = null;
+
+   alert("ToolTip");
   }
-  
-  // Crear el elemento del tooltip
-  tooltipActual = document.createElement('div');
-  tooltipActual.className = 'help-tooltip';
-  tooltipActual.innerHTML = '📌 <strong>Consejos para tu dirección:</strong><br><br>' +
-    '• Incluye: calle, número, reparto y ciudad.<br>' +
-    '• Agrega una referencia cercana si puedes.<br>' +
-    '• Ejemplo: "Calle 13 #45 e/ 2da y 3ra, Reparto José Martí".<br><br>' +
-    '✨ ¡Así recibirás tu pedido sin demoras!';
-  
-  document.body.appendChild(tooltipActual);
-  
-  // Obtener dimensiones
-  var anchoVentana = window.innerWidth;
-  var anchoTooltip = tooltipActual.offsetWidth;
-  var posicionBoton = botonAyuda.getBoundingClientRect();
-  
-  // Calcular posición centrada horizontalmente
-  var izquierda = (anchoVentana / 2) - (anchoTooltip / 2);
-  
-  // Asegurar que no se salga de los bordes
-  if (izquierda < 10) izquierda = 10;
-  if (izquierda + anchoTooltip > anchoVentana - 10) {
-    izquierda = anchoVentana - anchoTooltip - 10;
-  }
-  
-  // Posicionar el tooltip debajo del botón ❕
-  tooltipActual.style.top = (posicionBoton.bottom + 8) + 'px';
-  tooltipActual.style.left = izquierda + 'px';
-  
-  // Mostrar con animación
-  setTimeout(function() {
-    if (tooltipActual) tooltipActual.classList.add('show');
-  }, 10);
-  
-  // Ocultar automáticamente después de 5 segundos
-  setTimeout(function() {
-    ocultarTooltip();
-  }, 5000);
-}
 
 /* ================================================================
    10. VALIDACIÓN Y ENVÍO POR WHATSAPP (con el formato que pediste)
