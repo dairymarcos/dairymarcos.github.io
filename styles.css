@@ -652,25 +652,6 @@ img {
   flex-shrink: 0;
 }
 
-
-/* ----------------------------------------------------------------
-   11. TOOLTIP DE AYUDA (botón ❕ en el campo de dirección)
-   Pequeña burbuja con consejos que aparece al presionar ❕.
-   ---------------------------------------------------------------- */
-.help-tooltip {
-  position:      fixed;
-  z-index:       300;
-  background:    #2a2720;
-  border:        1.5px solid var(--color-accent-dim);
-  border-radius: 12px;
-  padding:       14px 16px;
-  font-size:     .82rem;
-  color:         var(--color-text-secondary);
-  line-height:   1.6;
-  max-width:     280px;
-  box-shadow:    0 8px 28px rgba(0, 0, 0, .55);
-}
-
 /* ----------------------------------------------------------------
    12. ANIMACIONES
    ---------------------------------------------------------------- */
