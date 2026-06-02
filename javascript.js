@@ -329,9 +329,33 @@ if (botonEnviar) {
   });
 }
 
-
 /* ================================================================
    11. INICIALIZACIÓN PRINCIPAL
+   ================================================================*/
+
+// Guardar datos del cliente
+function guardarDatosCliente() {
+  localStorage.setItem('cliente_nombre', campNombre.value);
+  localStorage.setItem('cliente_telefono', campTelefono.value);
+  localStorage.setItem('cliente_direccion', campDireccion.value);
+  localStorage.setItem('cliente_tarjeta', campTarjeta.value);
+}
+
+// Cargar datos guardados
+function cargarDatosCliente() {
+  var nombreGuardado = localStorage.getItem('cliente_nombre');
+  var telefonoGuardado = localStorage.getItem('cliente_telefono');
+  var direccionGuardada = localStorage.getItem('cliente_direccion');
+  var tarjetaGuardada = localStorage.getItem('cliente_tarjeta');
+  
+  if (nombreGuardado) campNombre.value = nombreGuardado;
+  if (telefonoGuardado) campTelefono.value = telefonoGuardado;
+  if (direccionGuardada) campDireccion.value = direccionGuardada;
+  if (tarjetaGuardada) campTarjeta.value = tarjetaGuardada;
+}
+
+/* ================================================================
+   12. INICIALIZACIÓN PRINCIPAL
    ================================================================ */
 
 cargarProductos();
