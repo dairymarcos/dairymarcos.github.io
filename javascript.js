@@ -330,28 +330,42 @@ if (botonEnviar) {
 }
 
 /* ================================================================
-   11. INICIALIZACIÓN PRINCIPAL
-   ================================================================*/
+   GUARDAR DATOS DEL CLIENTE (localStorage)
+   ================================================================ */
 
-// Guardar datos del cliente
 function guardarDatosCliente() {
-  localStorage.setItem('cliente_nombre', campNombre.value);
-  localStorage.setItem('cliente_telefono', campTelefono.value);
-  localStorage.setItem('cliente_direccion', campDireccion.value);
-  localStorage.setItem('cliente_tarjeta', campTarjeta.value);
+  if (!campNombre) return;
+  localStorage.setItem('dairy_nombre', campNombre.value);
+  localStorage.setItem('dairy_telefono', campTelefono.value);
+  localStorage.setItem('dairy_direccion', campDireccion.value);
+  localStorage.setItem('dairy_tarjeta', campTarjeta.value);
 }
 
-// Cargar datos guardados
 function cargarDatosCliente() {
-  var nombreGuardado = localStorage.getItem('cliente_nombre');
-  var telefonoGuardado = localStorage.getItem('cliente_telefono');
-  var direccionGuardada = localStorage.getItem('cliente_direccion');
-  var tarjetaGuardada = localStorage.getItem('cliente_tarjeta');
+  if (!campNombre) return;
+  var nombre = localStorage.getItem('dairy_nombre');
+  var telefono = localStorage.getItem('dairy_telefono');
+  var direccion = localStorage.getItem('dairy_direccion');
+  var tarjeta = localStorage.getItem('dairy_tarjeta');
   
-  if (nombreGuardado) campNombre.value = nombreGuardado;
-  if (telefonoGuardado) campTelefono.value = telefonoGuardado;
-  if (direccionGuardada) campDireccion.value = direccionGuardada;
-  if (tarjetaGuardada) campTarjeta.value = tarjetaGuardada;
+  if (nombre) campNombre.value = nombre;
+  if (telefono) campTelefono.value = telefono;
+  if (direccion) campDireccion.value = direccion;
+  if (tarjeta) campTarjeta.value = tarjeta;
+}
+
+// Guardar automáticamente cuando el cliente escribe
+if (campNombre) campNombre.addEventListener('input', guardarDatosCliente);
+if (campTelefono) campTelefono.addEventListener('input', guardarDatosCliente);
+if (campDireccion) campDireccion.addEventListener('input', guardarDatosCliente);
+if (campTarjeta) campTarjeta.addEventListener('input', guardarDatosCliente);
+
+// Modificar apertura del modal para cargar datos
+if (botonWhatsApp) {
+  var eventoOriginal = botonWhatsApp.onclick;
+  botonWhatsApp.addEventListener('click', function() {
+    cargarDatosCliente();
+  });
 }
 
 /* ================================================================
