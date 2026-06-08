@@ -322,7 +322,7 @@ if (botonEnviar) {
       '*Total: $' + totalPrecio.toFixed(2) + '*';
     
     var numeroWhatsApp = botonWhatsApp ? botonWhatsApp.dataset.phone : '5359638868';
-    var urlWhatsApp = 'https://wa.link/44e6s4' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
+    var urlWhatsApp = 'https://wa.me/' + numeroWhatsApp + '?text=' + encodeURIComponent(mensaje);
     
     window.open(urlWhatsApp, '_blank');
     cerrarModal();
